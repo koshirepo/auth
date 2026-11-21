@@ -1,6 +1,6 @@
 {
   "name": "@koshirepo/auth-core",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Shared types, errors and RBAC/ABAC policy evaluation for the auth library. No runtime dependencies.",
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "prepack": "pnpm -w run build",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   }
 }

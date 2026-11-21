@@ -1,5 +1,11 @@
 # @koshirepo/auth-core
 
+## 0.2.1
+
+### Patch Changes
+
+- Fix the 0.2.0 packages, which were published from a stale build and lacked `@koshirepo/auth-server/adapters/d1` and `@koshirepo/auth-server/password/scrypt`. Packages are now rebuilt whenever they are packed.
+
 ## 0.2.0
 
 ### Minor Changes

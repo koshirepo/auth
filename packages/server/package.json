@@ -1,6 +1,6 @@
 {
   "name": "@koshirepo/auth-server",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Token issuance and validation, sessions, MFA, passkeys, device binding, risk scoring and audit logging.",
   "repository": {
     "type": "git",
@@ -66,6 +66,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "prepack": "pnpm -w run build",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

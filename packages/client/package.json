@@ -1,6 +1,6 @@
 {
   "name": "@koshirepo/auth-client",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Headless browser client for the auth library: session state, automatic refresh, device binding, MFA and passkey flows, route guards. No styling.",
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "prepack": "pnpm -w run build",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
