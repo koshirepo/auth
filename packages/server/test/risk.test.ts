@@ -203,21 +203,24 @@ describe('risk-based login decisions', () => {
     expect(env.sink.ofType('login.succeeded')[0]!.data).toMatchObject({ riskScore: 40, mfa: true });
   });
 
-  it('denies a step-up when the user has no second factor', async () => {
+  it('lets a step-up through for a user with no second factor, and records that it was called for', async () => {
     const env = createAuthEnv({ risk: { signals: [fixed('a', 45)] } });
+    const created = await createUser(env);
+    const result = await attempt(env, await createDevice(env.clock));
+    expect(result.status === 'authenticated' && result.session.assurance).toBe('aal1');
+    // Nothing could be asked of the user, but the log shows the login was risky.
+    expect(env.sink.ofType('risk.evaluated')[0]).toMatchObject({ userId: created.id, data: { score: 45, decision: 'step_up' } });
+    expect(env.sink.ofType('login.succeeded')[0]!.data).toMatchObject({ riskScore: 45, mfa: false });
+  });
+
+  it('refuses that login instead when configured to deny', async () => {
+    const env = createAuthEnv({ risk: { signals: [fixed('a', 45)], whenStepUpUnavailable: 'deny' } });
     const created = await createUser(env);
     const error = await expectAuthError(attempt(env, await createDevice(env.clock)), 'RISK_DENIED');
     expect(error.status).toBe(403);
     expect(error.toJSON()).toEqual({ code: 'RISK_DENIED', message: 'This sign-in was blocked.' });
     expect(env.sink.ofType('login.failed')[0]).toMatchObject({ reason: 'RISK_DENIED', userId: created.id });
     expect(await env.auth.sessions.list(created.id)).toEqual([]);
-  });
-
-  it('lets a step-up through without a second factor when configured to', async () => {
-    const env = createAuthEnv({ risk: { signals: [fixed('a', 45)], whenStepUpUnavailable: 'allow' } });
-    await createUser(env);
-    const result = await attempt(env, await createDevice(env.clock));
-    expect(result.status === 'authenticated' && result.session.assurance).toBe('aal1');
   });
 
   it('denies from the deny threshold even when a second factor is enrolled', async () => {
@@ -342,10 +345,10 @@ describe('default signals through the login flow', () => {
     expect(env.sink.ofType('risk.evaluated').at(-1)!.data).toMatchObject({ score: 45, decision: 'step_up' });
   });
 
-  it('with the defaults, four wrong passwords put the right one behind a step-up', async () => {
-    // This is the interaction between throttling and risk scoring. Four failures score 40, which is
-    // the step-up threshold. A user with a second factor is asked for it. A user without one is
-    // denied until the failures age out, unless `whenStepUpUnavailable` is 'allow'.
+  // The next three tests cover the interaction between throttling and risk scoring. Four failed
+  // attempts score 40, which is the step-up threshold.
+
+  it('with the defaults, a user without a second factor still gets in after several wrong passwords', async () => {
     const env = createAuthEnv();
     await createUser(env);
     const laptop = await createDevice(env.clock);
@@ -354,16 +357,53 @@ describe('default signals through the login flow', () => {
     for (let index = 0; index < 4; index++) {
       await expectAuthError(attempt(env, laptop, 'a wrong password'), 'INVALID_CREDENTIALS');
     }
-    await expectAuthError(attempt(env, laptop), 'RISK_DENIED');
+    // There is no factor to step up to, so the login goes through, and the assessment is on record.
+    expect((await attempt(env, laptop)).status).toBe('authenticated');
     expect(env.sink.ofType('risk.evaluated').at(-1)!.data).toMatchObject({
       score: 40,
       decision: 'step_up',
       signals: [{ name: 'failed_attempts', score: 40 }],
     });
+  });
+
+  it('with the defaults, a user who has a second factor is asked for it after several wrong passwords', async () => {
+    const env = createAuthEnv();
+    const created = await createUser(env);
+    const laptop = await createDevice(env.clock);
+    await loginWithPassword(env, laptop);
+    await enrollTotp(env, created.id);
+
+    for (let index = 0; index < 4; index++) {
+      await expectAuthError(attempt(env, laptop, 'a wrong password'), 'INVALID_CREDENTIALS');
+    }
+    expect(await attempt(env, laptop)).toMatchObject({ status: 'mfa_required', reason: 'risk' });
+  });
+
+  it('with deny configured, a user without a second factor is refused until the failures age out', async () => {
+    const env = createAuthEnv({ risk: { whenStepUpUnavailable: 'deny' } });
+    await createUser(env);
+    const laptop = await createDevice(env.clock);
+    await loginWithPassword(env, laptop);
+
+    for (let index = 0; index < 4; index++) {
+      await expectAuthError(attempt(env, laptop, 'a wrong password'), 'INVALID_CREDENTIALS');
+    }
+    await expectAuthError(attempt(env, laptop), 'RISK_DENIED');
 
     // The failures are forgotten after the throttle window, and the user can sign in again.
     env.clock.advanceSec(901);
     await loginWithPassword(env, laptop);
+  });
+
+  it('with the defaults, one wrong password on a new device does not lock out a user without a second factor', async () => {
+    const env = createAuthEnv();
+    await createUser(env);
+    await loginWithPassword(env, await createDevice(env.clock));
+
+    const newLaptop = await createDevice(env.clock);
+    await expectAuthError(attempt(env, newLaptop, 'a typo in the password'), 'INVALID_CREDENTIALS');
+    expect((await attempt(env, newLaptop)).status).toBe('authenticated');
+    expect(env.sink.ofType('risk.evaluated').at(-1)!.data).toMatchObject({ score: 40, decision: 'step_up' });
   });
 
   it('denies a new device in a new country after repeated failures', async () => {

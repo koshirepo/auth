@@ -115,7 +115,7 @@ Present to enable passkey registration and sign-in.
 | `signals` | `[newDevice(), newNetwork(), failedAttempts()]` | Functions that each contribute a score. See below. |
 | `stepUpAt` | `40` | Score from which MFA is required. |
 | `denyAt` | `90` | Score from which the login is refused with `RISK_DENIED`. Scores are capped at 100. |
-| `whenStepUpUnavailable` | `'deny'` | What to do when step-up is called for and the user has no second factor: `'deny'` or `'allow'`. |
+| `whenStepUpUnavailable` | `'allow'` | What to do when step-up is called for and the user has no second factor to step up to. `'allow'` lets the login through. `'deny'` refuses it. See below. |
 
 Built-in signals, all imported from `@acme/auth-server`:
 
@@ -130,11 +130,9 @@ None of the history-based signals fire on an account's first login. A custom sig
 
 **What the defaults do.** A new device alone (30) or a new network alone (15) is allowed. A new device on a new network (45) requires MFA. Four failed attempts alone (40) require MFA, and so does one failed attempt on a new device. Denial outright needs a combination such as a new device, network and country plus two failures (90).
 
-**If your users can have no second factor,** read this before going live. With `whenStepUpUnavailable: 'deny'`, any login that calls for step-up is refused for a user without a second factor. With the default weights that includes a user who mistypes their password once on a new laptop, until the failure ages out after 15 minutes. Choose one:
+**Accounts without a second factor.** Step-up needs a factor to step up to. For a user who has none, the default `whenStepUpUnavailable: 'allow'` lets the login through, so for those accounts only `denyAt` stops a risky login. The `risk.evaluated` audit event still records `decision: 'step_up'`, which you can alert on.
 
-- `whenStepUpUnavailable: 'allow'`, which lets those logins through and keeps outright denial at `denyAt`;
-- require every user to enrol a second factor or a passkey;
-- lower the weights, for example `failedAttempts({ max: 20 })`.
+Set `whenStepUpUnavailable: 'deny'` once every user has a second factor or a passkey. Before that it locks real people out: with the default weights, a user without a second factor would be refused after one mistyped password on a new device, or four on a known one, until the failures age out after 15 minutes.
 
 ### `rateLimits`
 

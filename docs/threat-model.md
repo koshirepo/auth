@@ -180,7 +180,7 @@ Out of scope: an attacker who executes code on the server, a compromised browser
 6. **Device binding has no server nonces.** A proof is accepted within 60 seconds of server time, so script with momentary access could mint proofs usable for that long.
 7. **The replay cache and rate limits need a shared store.** With several server instances, use the Postgres adapter or an equivalent shared `EphemeralStore`. The memory adapter is for one process.
 8. **Throttling can be used against a victim.** An attacker who keeps failing can keep an account's password login delayed, by up to 15 minutes at a time. Passkey login is unaffected.
-9. **Risk-based step-up needs a second factor to step up to.** With the default `risk.whenStepUpUnavailable: 'deny'`, an account without a second factor is refused whenever the score reaches the step-up threshold. With the default weights that happens after four wrong passwords, or after one wrong password on a new device, until the failures age out after 15 minutes. Set it to `'allow'` or enrol every user in MFA.
+9. **Risk-based step-up only protects accounts that have a second factor.** Otherwise there is nothing to step up to. With the default `risk.whenStepUpUnavailable: 'allow'`, a risky login to an account without a second factor goes through, and only the outright deny threshold stops it. The `risk.evaluated` audit event records that step-up was called for. Setting `'deny'` closes this at the price of refusing real users: with the default weights, anyone without a second factor is refused after four wrong passwords, or after one wrong password on a new device, until the failures age out after 15 minutes. Use `'deny'` once every user has a second factor or a passkey.
 10. **Risk signals are heuristics.** IP-based signals are only as good as `clientIp`, and a determined attacker can use a nearby network. A signal or locator that throws is ignored rather than blocking logins.
 11. **A lost response on refresh logs the user out.** Reuse detection has no grace period, by design.
 12. **A failing audit sink does not block sign-in by default.** Set `audit.failClosed` if an unlogged action must not happen.
@@ -200,7 +200,7 @@ Out of scope: an attacker who executes code on the server, a compromised browser
 - [ ] Implement `clientIp` from a header your proxy sets and strips from incoming requests. With Express, configure `trust proxy`.
 - [ ] Use the Postgres adapter, or another shared store, as soon as you run more than one instance.
 - [ ] Call `auth.maintenance.purgeExpired()` from a scheduled job.
-- [ ] Decide `risk.whenStepUpUnavailable` deliberately (risk 9 above).
+- [ ] Set `risk.whenStepUpUnavailable: 'deny'` once every user has a second factor or a passkey (risk 9 above).
 - [ ] Send a content security policy from your app that forbids inline and third-party script.
 - [ ] Give your own API routes CORS headers that allow `Authorization` and `DPoP`.
 - [ ] Route `onError` and `audit.onError` to your error tracker.

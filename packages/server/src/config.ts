@@ -141,7 +141,13 @@ export interface RiskConfig {
   stepUpAt?: number;
   /** Score from which the login is denied. Default 90. Scores are capped at 100. */
   denyAt?: number;
-  /** What to do when step-up is needed but the user has no second factor. Default `deny`. */
+  /**
+   * What to do when a login calls for step-up but the user has no second factor to step up to.
+   * `allow` (default) lets the login through. The `risk.evaluated` audit event still records that
+   * step-up was called for. `deny` refuses it, which is right only once every user has a second
+   * factor or a passkey: before that it locks people out on events as ordinary as a mistyped
+   * password on a new device.
+   */
   whenStepUpUnavailable?: 'deny' | 'allow';
 }
 
@@ -433,7 +439,7 @@ export function resolveConfig(config: AuthConfig): ResolvedConfig {
     signals,
     stepUpAt,
     denyAt,
-    whenStepUpUnavailable: oneOf('risk.whenStepUpUnavailable', config.risk?.whenStepUpUnavailable, 'deny', ['deny', 'allow'] as const),
+    whenStepUpUnavailable: oneOf('risk.whenStepUpUnavailable', config.risk?.whenStepUpUnavailable, 'allow', ['deny', 'allow'] as const),
   };
 
   // Rate limits

@@ -108,11 +108,13 @@ export const auth = createAuth({
 
 That is a complete configuration. Everything else has a default, listed in the [configuration reference](configuration.md).
 
-One default deserves a decision now. With `risk.whenStepUpUnavailable: 'deny'`, a user who has no second factor is refused whenever a login looks risky enough to call for one, and with the default weights one mistyped password on a new device is enough. If your users can exist without a second factor, add this until MFA is mandatory for them:
+One default deserves a decision later. When a login looks risky, the library asks for a second factor. A user who has none cannot be asked, and by default is let through. Once every user has a second factor or a passkey, tighten that so such a login is refused instead:
 
 ```ts
-  risk: { whenStepUpUnavailable: 'allow' },
+  risk: { whenStepUpUnavailable: 'deny' },
 ```
+
+Do not set it earlier. With the default weights it would refuse a user without a second factor after a single mistyped password on a new device.
 
 ## 4. Mount it in Express
 
@@ -552,7 +554,7 @@ What is different from a single-page app:
 | The refresh cookie is never stored | The page is not HTTPS, the two origins are on different sites, or it is Safari on `http://localhost` | See sections "What you need" and 11 |
 | Signed out when two tabs are open | The tab lock is disabled or unsupported, so two tabs presented the same refresh token | Leave `locks` at its default. Every current browser has the Web Locks API. |
 | Signed out after a flaky connection | A refresh response was lost and the retry counted as reuse of the old token | By design. See the threat model, risk 11. |
-| `RISK_DENIED` for real users | The login called for step-up and the user has no second factor | See the note at the end of section 3 |
+| `RISK_DENIED` for real users | The risk score reached `risk.denyAt`, or `whenStepUpUnavailable` is `'deny'` and the user has no second factor | Look at the `risk.evaluated` audit event for that login. It lists the signals that fired and their scores. |
 | 403 `STEP_UP_REQUIRED` when managing MFA or passkeys | The last interactive sign-in is more than ten minutes old | `authClient.reauthenticate(...)`, then retry |
 | 429 `RATE_LIMITED` | Too many wrong passwords or codes | Wait `details.retryAfterSec`. The `Retry-After` header carries the same number. |
 | CORS error calling your own routes | Your routes do not allow the `Authorization` and `DPoP` headers | See the CORS middleware in section 4 |

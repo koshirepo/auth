@@ -49,7 +49,7 @@ describe('configuration defaults', () => {
       enrollmentTtlSec: 600,
     });
     expect(config.dpop).toEqual({ mode: 'required', algorithms: ['ES256'], iatToleranceSec: 60 });
-    expect(config.risk).toMatchObject({ stepUpAt: 40, denyAt: 90, whenStepUpUnavailable: 'deny' });
+    expect(config.risk).toMatchObject({ stepUpAt: 40, denyAt: 90, whenStepUpUnavailable: 'allow' });
     expect(config.risk.signals).toHaveLength(3);
     expect(config.rateLimits.login).toEqual({ freeAttempts: 5, windowSec: 900, baseDelaySec: 30, maxDelaySec: 900 });
     expect(config.audit.failClosed).toBe(false);

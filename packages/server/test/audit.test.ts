@@ -230,8 +230,6 @@ async function exerciseEverything() {
     {
       access: { rbac },
       audit: { sinks: [sink, storeSink(adapter.audit)] },
-      // Lets the scenario continue past step-up decisions for a user who has no second factor yet.
-      risk: { whenStepUpUnavailable: 'allow' },
     },
     { clock, adapter },
   );
