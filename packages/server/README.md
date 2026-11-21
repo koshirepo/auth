@@ -16,4 +16,29 @@ The server side of the auth library: signing keys and JWKS, access tokens, sessi
 
 Optional peer dependencies: `argon2` for password hashing, `pg` or any driver with `query(text, params)` for Postgres, `express` 5 for the Express adapter, `hono` 4.2 or later for the Hono adapter. Hono 5 is not supported yet.
 
+## Installation
+
+```sh
+npm install @koshirepo/auth-server
+```
+
+Install optional integrations and adapters separately:
+
+```sh
+# Argon2id password hashing
+npm install argon2
+
+# Postgres adapter
+npm install pg
+
+# Express adapter
+npm install express
+
+# Hono adapter
+npm install hono@^4.2.0
+
+# Testing utilities
+npm install --save-dev vitest
+```
+
 Start with the [integration guide](../../docs/integration-express.md), which covers Express, Hono on Bun and Next.js. The [configuration reference](../../docs/configuration.md), [API reference](../../docs/api-reference.md) and [threat model](../../docs/threat-model.md) cover the rest.

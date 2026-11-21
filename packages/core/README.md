@@ -7,6 +7,12 @@ Shared building blocks of the auth library. No dependencies, and no Node or DOM 
 - ABAC: `definePolicy`, `allow`, `deny` and `createAuthorizer`. Policies are functions of subject, action, resource and context. Deny wins, and the default is deny.
 - Audit event types, identity types and the HTTP wire types shared by server and client.
 
+## Installation
+
+```sh
+npm install @koshirepo/auth-core
+```
+
 ```ts
 import { createAuthorizer, defineRbac, definePolicy, deny } from '@koshirepo/auth-core';
 

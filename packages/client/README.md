@@ -16,6 +16,22 @@ The browser side of the auth library. Headless: it has logic and state, and no m
 
 Optional peer dependencies: `@simplewebauthn/browser` for passkeys, `react` 18 or later for the hooks.
 
+## Installation
+
+```sh
+npm install @koshirepo/auth-client
+```
+
+Install the optional peer dependencies only for the features you use:
+
+```sh
+# Passkeys
+npm install @simplewebauthn/browser
+
+# React hooks
+npm install react react-dom
+```
+
 ```ts
 import { createAuthClient } from '@koshirepo/auth-client';
 

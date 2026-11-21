@@ -23,6 +23,43 @@ A TypeScript authentication library in three packages: shared types and access c
 - **Audit log**: a typed event for every auth action, written through pluggable sinks, never containing secrets or tokens.
 - **Persistence**: adapter interfaces, with an in-memory adapter and a Postgres adapter.
 
+## Installation
+
+Requires Node.js 22.12 or later. Install only the packages needed by the application:
+
+```sh
+# Shared types and access-control helpers
+npm install @koshirepo/auth-core
+
+# Server and adapters
+npm install @koshirepo/auth-server
+
+# Browser client
+npm install @koshirepo/auth-client
+```
+
+Dependencies used by optional features must also be installed:
+
+```sh
+# Express server
+npm install express
+
+# Hono server
+npm install hono@^4.2.0
+
+# Password hashing
+npm install argon2
+
+# Postgres adapter
+npm install pg
+
+# Browser passkeys
+npm install @simplewebauthn/browser
+
+# React hooks
+npm install react react-dom
+```
+
 ## Quick start
 
 Server:
