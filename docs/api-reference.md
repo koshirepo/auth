@@ -524,7 +524,23 @@ The module also exports `getAuth(c)`, which throws `TOKEN_MISSING` if `requireAu
 
 Tables: `users`, `password_credentials`, `totp_credentials`, `recovery_codes`, `passkeys`, `sessions`, `refresh_tokens`, `devices`, `signing_keys`, `audit_events`, `ephemeral`, `schema_migrations`.
 
-### 6.3 `@koshirepo/auth-server/password/argon2`
+### 6.3 `@koshirepo/auth-server/adapters/d1`
+
+| Export | Purpose |
+|---|---|
+| `d1Adapter({ db, tablePrefix?, clock?, stores? })` | The adapter. `db` is the D1 binding, not a `withSession()` session. Methods that change several rows use `db.batch()`, which D1 runs as a transaction. |
+| `migrate(db, { tablePrefix? }?)` | Applies pending migrations, each in one batch. Returns the ids it applied. Run it from a deploy step, not on every request. |
+| `migrations(tablePrefix?)` | The migrations as `{ id, statements }[]`. |
+| `migrationSql(tablePrefix?)` | The whole schema as one SQL file. The default prefix's file ships as `migrations/d1/0001_auth.sql`, for `wrangler d1 migrations apply`. |
+| `D1DatabaseLike` | The part of a D1 binding the adapter uses. `env.DB` fits as is. |
+
+Tables are the Postgres ones with the prefix, default `auth_`.
+
+### 6.4 `@koshirepo/auth-server/password/scrypt`
+
+`scrypt({ logN?, r?, p?, pepper? }?)` returns a `PasswordHasher` built on the platform's `node:crypto`, for runtimes where the `argon2` addon cannot load. On Cloudflare Workers it needs the `nodejs_compat` flag. The defaults (N = 2^14, r = 8, p = 5) are an OWASP-recommended setting, and weaker ones are refused.
+
+### 6.5 `@koshirepo/auth-server/password/argon2`
 
 `argon2id(options?)` returns a `PasswordHasher`:
 
@@ -538,7 +554,7 @@ interface PasswordHasher {
 
 Implement the interface yourself to use another library or runtime.
 
-### 6.4 `@koshirepo/auth-server/testing`
+### 6.6 `@koshirepo/auth-server/testing`
 
 Requires Vitest.
 

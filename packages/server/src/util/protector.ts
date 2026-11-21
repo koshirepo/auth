@@ -19,7 +19,7 @@ export interface DataKeyInput {
 export class DataProtector {
   private readonly keys = new Map<string, Uint8Array>();
   private readonly currentId: string;
-  private readonly derived = new Map<string, Promise<Uint8Array>>();
+  private readonly derived = new Map<string, Uint8Array>();
 
   constructor(inputs: readonly DataKeyInput[]) {
     if (!Array.isArray(inputs) || inputs.length === 0) {
@@ -80,9 +80,10 @@ export class DataProtector {
   async keyedHash(purpose: string, value: string): Promise<string> {
     let key = this.derived.get(purpose);
     if (!key) {
-      key = hkdfSha256(this.current, `koshi-auth:${purpose}`);
+      // The finished key is kept, not the promise: Workers cannot await another request's work.
+      key = await hkdfSha256(this.current, `koshi-auth:${purpose}`);
       this.derived.set(purpose, key);
     }
-    return toBase64Url(await hmac('SHA-256', await key, value));
+    return toBase64Url(await hmac('SHA-256', key, value));
   }
 }

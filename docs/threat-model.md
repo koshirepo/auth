@@ -188,7 +188,7 @@ Out of scope: an attacker who executes code on the server, a compromised browser
 14. **Constant-time comparison is implemented in JavaScript.** It avoids early exit, but a JavaScript engine gives no hard timing guarantee. The compared values are short-lived and rate-limited.
 15. **Your sign-up flow can reveal which identifiers exist.** `users.create` reports a taken identifier. How to present that is up to you.
 16. **Audit integrity is the sink's job.** The library does not sign or chain events.
-17. **Not verified:** the Postgres adapter under true multi-connection concurrency (the tests run it in PGlite, on one connection), browsers other than Chromium, the browser's own passkey dialog, and runtimes other than Node and Bun. The Chromium and Bun checks were done by hand and are not part of the automated suite. The README lists exactly what was checked.
+17. **Not verified:** the Postgres adapter under true multi-connection concurrency (the tests run it in PGlite, on one connection), browsers other than Chromium, the browser's own passkey dialog, the hosted D1 service (the D1 adapter was tested on Cloudflare's runtime with local D1), and runtimes other than Node, Bun and Workers. The Chromium and Bun checks were done by hand and are not part of the automated suite. The README lists exactly what was checked.
 
 ## 7. Deployment checklist
 
@@ -200,6 +200,7 @@ Out of scope: an attacker who executes code on the server, a compromised browser
 - [ ] Implement `clientIp` from a header your proxy sets and strips from incoming requests. With Express, configure `trust proxy`. With Hono there is no default: until you set `clientIp`, no address reaches risk scoring, throttling or the audit log.
 - [ ] Use the Postgres adapter, or another shared store, as soon as you run more than one instance.
 - [ ] Call `auth.maintenance.purgeExpired()` from a scheduled job.
+- [ ] On D1, pass the binding itself to `d1Adapter`, never a read-replica session, so a revoked session or used token is seen at once.
 - [ ] Set `risk.whenStepUpUnavailable: 'deny'` once every user has a second factor or a passkey (risk 9 above).
 - [ ] Send a content security policy from your app that forbids inline and third-party script.
 - [ ] Give your own API routes CORS headers that allow `Authorization` and `DPoP`.

@@ -66,7 +66,7 @@ Present to enable password login.
 
 | Option | Default | Purpose |
 |---|---|---|
-| `hasher` | required | A `PasswordHasher`. Use `argon2id()` from `@koshirepo/auth-server/password/argon2`. |
+| `hasher` | required | A `PasswordHasher`. Use `argon2id()` from `@koshirepo/auth-server/password/argon2`, or on Cloudflare Workers `scrypt()` from `@koshirepo/auth-server/password/scrypt`. |
 | `minLength` | `12` | In characters. Between 8 and 128. |
 | `maxLength` | `256` | Bounds the cost of hashing. Longer passwords are rejected without being hashed. |
 | `check` | none | `(password, { identifier }) => string \| null`. Return a short reason to reject, for example after a breached-password lookup. May be async. |

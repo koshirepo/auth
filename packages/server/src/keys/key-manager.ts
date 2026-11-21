@@ -112,6 +112,9 @@ export class KeyManager {
     if (!force && this.snapshot && now - this.snapshot.loadedAtMs < this.options.cacheTtlSec * 1000) {
       return Promise.resolve(this.snapshot);
     }
+    // Cloudflare Workers ties I/O to the request that started it, so a request must not wait on a
+    // load another request began. Concurrent reconciles are safe: the store operations are atomic.
+    if (globalThis.navigator?.userAgent === 'Cloudflare-Workers') return this.reconcile();
     this.loading ??= this.reconcile().finally(() => {
       this.loading = null;
     });

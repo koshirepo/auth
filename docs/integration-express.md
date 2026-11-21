@@ -1,6 +1,6 @@
 # Integrating with Express
 
-This guide takes an Express API and a React single-page app from nothing to password login, a second factor, passkeys, device-bound tokens and permission checks. Sections at the end cover the differences for [Next.js](#12-nextjs) and for [Hono on Bun](#13-hono-bun-and-other-fetch-based-servers).
+This guide takes an Express API and a React single-page app from nothing to password login, a second factor, passkeys, device-bound tokens and permission checks. Sections at the end cover the differences for [Next.js](#12-nextjs), [Hono on Bun](#13-hono-bun-and-other-fetch-based-servers) and [Cloudflare Workers with D1](#14-cloudflare-workers-with-hono-and-d1).
 
 The server code in sections 2 to 4 is exercised end to end by `packages/server/test/guide.test.ts`, with an in-process Postgres standing in for a real one.
 
@@ -654,7 +654,102 @@ On the client nothing changes. A React app using the hooks from section 6 was bu
 
 **Other servers.** Anything built on `Request` and `Response` can use the pieces the adapters are made of, as the Next.js section does: route the auth paths to `createAuthHandler(auth, options)`, and call `createHttpAuthContext(auth, options).authenticate(request)` in front of your own routes.
 
-## 14. Troubleshooting
+## 14. Cloudflare Workers with Hono and D1
+
+On Cloudflare your code runs on Cloudflare's runtime, not on Bun. Bun can still be your package manager and script runner. Three things change from section 13: the database is D1, passwords are hashed with scrypt because the `argon2` native addon cannot load on Workers, and the client address comes from Cloudflare's header.
+
+**Check your plan first.** One password hash or check costs about 200 ms of CPU with the default settings. The Workers Free plan allows 10 ms of CPU per request, so password login does not fit on it. Use a paid plan, or passkeys only.
+
+```powershell
+bun add @koshirepo/auth-core @koshirepo/auth-server hono
+```
+
+```jsonc
+// wrangler.jsonc
+{
+  "name": "my-api",
+  "main": "src/server.ts",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "triggers": { "crons": ["0 * * * *"] },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "my-api", "database_id": "<from wrangler d1 create>", "migrations_dir": "migrations" }
+  ]
+}
+```
+
+Create the tables with the migration the package ships, and store the data key from section 3 as a secret:
+
+```powershell
+Copy-Item node_modules/@koshirepo/auth-server/migrations/d1/0001_auth.sql migrations/0001_auth.sql
+```
+
+```powershell
+bunx wrangler d1 migrations apply my-api --remote
+```
+
+```powershell
+bunx wrangler secret put AUTH_DATA_KEY
+```
+
+```ts
+// src/auth.ts
+import { env } from 'cloudflare:workers';
+import { createAuth } from '@koshirepo/auth-server';
+import { d1Adapter } from '@koshirepo/auth-server/adapters/d1';
+import { scrypt } from '@koshirepo/auth-server/password/scrypt';
+import { policies, rbac } from './access';
+
+export const auth = createAuth({
+  issuer: 'https://api.example.com',
+  audience: 'https://api.example.com',
+  adapter: d1Adapter({ db: env.DB }),        // the binding itself, not env.DB.withSession()
+  dataKeys: [{ id: '2026-11', key: env.AUTH_DATA_KEY }],
+
+  password: { hasher: scrypt() },
+  passkeys: { rpId: 'example.com', rpName: 'Example', origins: ['https://app.example.com'] },
+  access: { rbac, policies },
+});
+```
+
+```ts
+// src/server.ts
+import { honoAuth } from '@koshirepo/auth-server/hono';
+import { Hono } from 'hono';
+import { auth } from './auth';
+
+const { routes, requireAuth, requirePermission, onError } = honoAuth(auth, {
+  publicOrigin: 'https://api.example.com',
+  allowedOrigins: ['https://app.example.com'],
+  // Cloudflare sets this header itself, and overwrites any value the client sends.
+  clientIp: (c) => c.req.header('cf-connecting-ip'),
+  onError: (error) => console.error(error),
+});
+
+const app = new Hono();
+app.use(routes);
+// CORS and your routes exactly as in section 13.
+app.onError(onError);
+
+export default {
+  fetch: app.fetch,
+  // Deletes expired state. D1 has no background cleanup of its own.
+  scheduled: (_event: ScheduledController, _env: unknown, ctx: ExecutionContext) => {
+    ctx.waitUntil(auth.maintenance.purgeExpired());
+  },
+};
+```
+
+What to know before you ship:
+
+- **Every authenticated request writes to D1.** Replay protection records each DPoP proof, and the record must be visible to every Worker instance at once. That is one D1 row written per request, which counts toward your D1 write quota and adds the round trip to the database's primary location.
+- **Do not use read replicas for this adapter.** A replica can lag, and a lagging read could miss a revoked session or a used refresh token.
+- **A service that only verifies tokens** must pass a shared replay store, because the default one lives in a single isolate: `createAccessTokenVerifier({ ..., dpop: { replayStore: d1Adapter({ db: env.DB }).ephemeral } })`.
+- **Hashes do not carry over between hashers.** Users with `argon2id` hashes cannot sign in through `scrypt()` and would need a password reset.
+
+This setup was run in Cloudflare's runtime with local D1 through `wrangler dev`. It has not been run against the hosted D1 service.
+
+## 15. Troubleshooting
 
 | Symptom | Likely cause | What to do |
 |---|---|---|

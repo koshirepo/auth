@@ -11,7 +11,7 @@ export interface PasswordServiceOptions {
 }
 
 export class PasswordService {
-  private dummyHash: Promise<string> | null = null;
+  private dummyHash: string | null = null;
 
   constructor(private readonly options: PasswordServiceOptions) {}
 
@@ -66,8 +66,9 @@ export class PasswordService {
     return true;
   }
 
-  private getDummyHash(): Promise<string> {
-    this.dummyHash ??= this.options.config.hasher.hash(randomToken());
+  private async getDummyHash(): Promise<string> {
+    // The finished value is kept, not the promise: Workers cannot await another request's work.
+    this.dummyHash ??= await this.options.config.hasher.hash(randomToken());
     return this.dummyHash;
   }
 }

@@ -4,3 +4,6 @@ packages:
 # argon2 ships prebuilt binaries, so its install script does not need to run.
 allowBuilds:
   argon2: false
+  esbuild: false
+  sharp: false
+  workerd: false
