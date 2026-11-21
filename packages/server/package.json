@@ -1,0 +1,87 @@
+{
+  "name": "@acme/auth-server",
+  "version": "0.1.0",
+  "description": "Token issuance and validation, sessions, MFA, passkeys, device binding, risk scoring and audit logging.",
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.12"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./verifier": {
+      "types": "./dist/verifier/index.d.ts",
+      "default": "./dist/verifier/index.js"
+    },
+    "./http": {
+      "types": "./dist/http/index.d.ts",
+      "default": "./dist/http/index.js"
+    },
+    "./express": {
+      "types": "./dist/express/index.d.ts",
+      "default": "./dist/express/index.js"
+    },
+    "./adapters/memory": {
+      "types": "./dist/adapters/memory.d.ts",
+      "default": "./dist/adapters/memory.js"
+    },
+    "./adapters/postgres": {
+      "types": "./dist/adapters/postgres/index.d.ts",
+      "default": "./dist/adapters/postgres/index.js"
+    },
+    "./password/argon2": {
+      "types": "./dist/password/argon2.d.ts",
+      "default": "./dist/password/argon2.js"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "default": "./dist/testing/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@acme/auth-core": "workspace:*",
+    "@simplewebauthn/server": "^14.1.0",
+    "jose": "^6.2.18"
+  },
+  "peerDependencies": {
+    "argon2": "^0.45.0",
+    "express": "^5.0.0",
+    "pg": "^8.0.0",
+    "vitest": ">=3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "argon2": {
+      "optional": true
+    },
+    "express": {
+      "optional": true
+    },
+    "pg": {
+      "optional": true
+    },
+    "vitest": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.17",
+    "@types/express": "^5.0.0",
+    "@types/pg": "^8.11.0",
+    "argon2": "^0.45.2",
+    "express": "^5.3.0",
+    "pg": "^8.23.1"
+  }
+}
