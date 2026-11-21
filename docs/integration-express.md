@@ -1,12 +1,12 @@
 # Integrating with Express
 
-This guide takes an Express API and a React single-page app from nothing to password login, a second factor, passkeys, device-bound tokens and permission checks. A [Next.js section](#12-nextjs) at the end covers the differences.
+This guide takes an Express API and a React single-page app from nothing to password login, a second factor, passkeys, device-bound tokens and permission checks. Sections at the end cover the differences for [Next.js](#12-nextjs) and for [Hono on Bun](#13-hono-bun-and-other-fetch-based-servers).
 
 The server code in sections 2 to 4 is exercised end to end by `packages/server/test/guide.test.ts`, with an in-process Postgres standing in for a real one.
 
 ## What you need
 
-- Node 22.12 or later.
+- Node 22.12 or later. Bun also works: see [section 13](#13-hono-bun-and-other-fetch-based-servers).
 - Postgres.
 - The web app and the API on the same registrable domain, for example `app.example.com` and `api.example.com`. The refresh cookie is `SameSite=Strict`, so two unrelated domains will not work.
 - HTTPS in production. The refresh cookie is `Secure`. For local development see [section 11](#11-local-development).
@@ -544,7 +544,110 @@ What is different from a single-page app:
 - **Do not treat the presence of the refresh cookie as authentication** in middleware or server components. It shows that a session may exist, nothing more. It is acceptable for deciding which shell to render first. With the default `SameSite=Strict` it is also absent on navigations that arrive from other sites, so use `sessions.cookie.sameSite: 'lax'` if you rely on it for that.
 - **The first render is always signed out or loading.** The session is restored by a request the client makes after it starts.
 
-## 13. Troubleshooting
+## 13. Hono, Bun and other Fetch-based servers
+
+The Hono adapter mirrors the Express one. It is covered by the automated tests, and the setup below was also run on Bun 1.4 with Hono 4, with a React app built by Vite 8, in a Chromium browser.
+
+```ts
+// server.ts
+import { honoAuth } from '@acme/auth-server/hono';
+import { getConnInfo } from '@hono/bun';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { auth } from './auth';
+import { invoices } from './invoices';
+
+const APP_ORIGIN = 'https://app.example.com';
+
+const { routes, requireAuth, requirePermission, onError } = honoAuth(auth, {
+  publicOrigin: 'https://api.example.com',   // the origin browsers use, not an internal address
+  allowedOrigins: [APP_ORIGIN],
+  // The address of the connection. Behind a proxy, read the header your proxy sets instead.
+  clientIp: (c) => getConnInfo(c).remote.address,
+  onError: (error) => console.error(error),  // unexpected failures: send these to your error tracker
+});
+
+const app = new Hono();
+
+// 1. The auth endpoints under /auth, and /.well-known/jwks.json. They handle their own CORS.
+app.use(routes);
+
+// 2. CORS for your own routes. Register it before them: Hono does not run middleware added after a route.
+app.use(
+  '/api/*',
+  cors({ origin: [APP_ORIGIN], allowHeaders: ['Authorization', 'Content-Type', 'DPoP'], exposeHeaders: ['WWW-Authenticate'] }),
+);
+
+// 3. Your routes.
+app.get('/api/invoices/:id', requireAuth(), requirePermission('invoice:read'), async (c) => {
+  return c.json(await invoices.get(c.req.param('id')));
+});
+
+// A permission that depends on the object: load it and let the policies see it. The loader's
+// context does not carry the route's path type, hence the "!" on the parameter.
+app.put(
+  '/api/invoices/:id',
+  requireAuth(),
+  requirePermission('invoice:write', { resource: (c) => invoices.get(c.req.param('id')!) }),
+  async (c) => c.json(await invoices.update(c.req.param('id'), await c.req.json())),
+);
+
+app.delete(
+  '/api/invoices/:id',
+  requireAuth({ assurance: 'aal2', maxAuthAgeSec: 300 }),
+  requirePermission('invoice:delete'),
+  async (c) => {
+    await invoices.remove(c.req.param('id'));
+    return c.body(null, 204);
+  },
+);
+
+// The verified identity is on the context, typed.
+app.get('/api/me', requireAuth(), (c) => {
+  const { subject, context } = c.get('auth');
+  return c.json({ id: subject.id, roles: subject.roles, assurance: context.assurance });
+});
+
+// 4. AuthErrors thrown in your handlers get the JSON error format.
+app.onError(onError);
+
+export default { port: 3000, fetch: app.fetch };
+```
+
+`auth.ts` is the one from section 3, and the middleware behaves as the table in section 4 describes. What differs from Express:
+
+- **`clientIp` has no default.** Where the address comes from depends on the runtime. `getConnInfo` from `hono/bun` reads it from Bun's connection.
+- **`onError` answers every error.** `AuthError`s get their own status and code. Anything else is reported to the `onError` option and answered with a generic 500. To keep your own handling for other errors, branch first: `app.onError((error, c) => (isAuthError(error) ? onError(error, c) : yours(error, c)))`.
+- **Body parsing.** `routes` copes with an earlier middleware that read the body through Hono, such as `c.req.json()`. It cannot recover a body that was consumed from `c.req.raw` directly.
+
+**Password hashing on Bun.** `argon2id()` works under Bun as it is. If you would rather not ship a native addon, Bun's built-in `Bun.password` fits the `PasswordHasher` interface:
+
+```ts
+import type { PasswordHasher } from '@acme/auth-server';
+
+export const bunArgon2id: PasswordHasher = {
+  hash: (password) => Bun.password.hash(password, { algorithm: 'argon2id', memoryCost: 19_456, timeCost: 2 }),
+  verify: async (hash, password) => {
+    try {
+      return await Bun.password.verify(password, hash);
+    } catch {
+      return false;
+    }
+  },
+  needsRehash: (hash) => {
+    const match = /^\$argon2id\$v=(\d+)\$m=(\d+),t=(\d+),p=(\d+)\$/.exec(hash);
+    return !match || Number(match[1]) < 19 || Number(match[2]) < 19_456 || Number(match[3]) < 2;
+  },
+};
+```
+
+Not tried on Bun: the Postgres adapter. It only needs `query(text, params)` returning `{ rows }`, which a `pg` Pool provides.
+
+On the client nothing changes. With Vite, the app from section 6 works as written, in the dev server and in a production build. When the Vite dev server and the API run on different ports, list the dev server's origin in `allowedOrigins`, in the `cors()` options and in `passkeys.origins`, as in section 11.
+
+**Other servers.** Anything built on `Request` and `Response` can use the pieces the adapters are made of, as the Next.js section does: route the auth paths to `createAuthHandler(auth, options)`, and call `createHttpAuthContext(auth, options).authenticate(request)` in front of your own routes.
+
+## 14. Troubleshooting
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
@@ -557,6 +660,6 @@ What is different from a single-page app:
 | `RISK_DENIED` for real users | The risk score reached `risk.denyAt`, or `whenStepUpUnavailable` is `'deny'` and the user has no second factor | Look at the `risk.evaluated` audit event for that login. It lists the signals that fired and their scores. |
 | 403 `STEP_UP_REQUIRED` when managing MFA or passkeys | The last interactive sign-in is more than ten minutes old | `authClient.reauthenticate(...)`, then retry |
 | 429 `RATE_LIMITED` | Too many wrong passwords or codes | Wait `details.retryAfterSec`. The `Retry-After` header carries the same number. |
-| CORS error calling your own routes | Your routes do not allow the `Authorization` and `DPoP` headers | See the CORS middleware in section 4 |
+| CORS error calling your own routes | Your routes do not allow the `Authorization` and `DPoP` headers. On Hono, the same symptom appears when `cors()` is registered after the routes, because Hono does not run middleware added after a route. | See the CORS middleware in section 4, or section 13 for Hono |
 | `ExperimentalWarning` mentioning ML-DSA in the server log | Node prints it when `@simplewebauthn/server` checks for post-quantum signature support | Harmless |
 | pnpm reports "Ignored build scripts: argon2" | pnpm wants a decision about the install script | Set `allowBuilds: argon2: false`. The prebuilt binary is used. |

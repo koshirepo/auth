@@ -5,7 +5,7 @@ A TypeScript authentication library in three packages: shared types and access c
 | Package | Contents | Runtime dependencies |
 |---|---|---|
 | [`@acme/auth-core`](packages/core) | Types, typed errors with stable codes, RBAC and ABAC policy evaluation, audit event types, HTTP wire types | None |
-| [`@acme/auth-server`](packages/server) | Signing keys and JWKS, access tokens, sessions and refresh rotation, password login, TOTP and recovery codes, passkeys, device binding, risk scoring, audit log, persistence adapters, HTTP handler, Express adapter | `jose`, `@simplewebauthn/server` |
+| [`@acme/auth-server`](packages/server) | Signing keys and JWKS, access tokens, sessions and refresh rotation, password login, TOTP and recovery codes, passkeys, device binding, risk scoring, audit log, persistence adapters, HTTP handler, Express and Hono adapters | `jose`, `@simplewebauthn/server` |
 | [`@acme/auth-client`](packages/client) | Session state, automatic refresh, device key and proofs, MFA and passkey flows, route guards, React hooks. No styling. | `jose` |
 
 `@acme` is a placeholder scope. Replace it across the repository with your own before publishing.
@@ -70,7 +70,7 @@ The [Express integration guide](docs/integration-express.md) builds this out ste
 
 | Document | Contents |
 |---|---|
-| [Integration guide for Express](docs/integration-express.md) | From nothing to a working app, with a Next.js section and troubleshooting |
+| [Integration guide for Express](docs/integration-express.md) | From nothing to a working app, with sections for Next.js and for Hono on Bun, and troubleshooting |
 | [API reference](docs/api-reference.md) | Every export, error code, audit event and HTTP endpoint |
 | [Configuration reference](docs/configuration.md) | Every option and default, plus key management and operations |
 | [Threat model](docs/threat-model.md) | What is defended and how, the risks that remain, and a deployment checklist |
@@ -100,20 +100,30 @@ Each test creates and drops its own schema in that database.
 
 ## Status
 
-Verified in this repository:
+Verified by the automated suite:
 
 - All three packages build and type-check under TypeScript 7 in strict mode.
 - The test suite passes. It covers every module, including the security cases: expired tokens, wrong algorithm, `alg: none`, HMAC signed with the public key, refresh reuse, concurrent refresh, TOTP replay, DPoP replay and key mismatch, passkey origin and counter checks, and a test that drives every flow and asserts that no secret reaches the audit log.
 - The Postgres adapter's SQL runs in a real Postgres engine (PGlite), including a full login, refresh and logout through Express.
 - The Express adapter is tested against a real Express 5 server over HTTP.
+- The Hono adapter is tested through Hono's own request handling, in process.
 - Passkeys are tested with a software authenticator against the real `@simplewebauthn/server` verification.
 - The browser client is tested against the real server handler, in process.
+
+Checked by hand on 2026-11-21, with the packages packed as for publishing and installed into a separate project:
+
+- **Bun 1.4 with Hono 4.** Login, refresh rotation and reuse detection, TOTP, recovery codes, passkeys, step-up and the standalone verifier, with password hashing through both the `argon2` addon and `Bun.password`. In-memory adapter.
+- **Vite 8 with React 19.** Production build and dev server. Nothing from Node ends up in the browser bundle, and the passkey helper is split into a chunk that loads on first use.
+- **A Chromium 156 browser.** Sign-in, session restore after a reload and in a new tab, device-bound API calls, sign-out reaching the other tab, and two tabs each making 100 refreshes at the same moment without tripping reuse detection. Tried with the app served by the API, and with the app on another origin. The refresh cookie was invisible to script, nothing was written to Web Storage, and the device key could not be exported.
+
+These checks are not part of the automated suite, so they do not guard against regressions.
 
 Not verified:
 
 - The Postgres adapter against a real server with several connections racing. PGlite uses one connection, so the atomic statements are tested for their logic, not under true concurrency. Run the suite with `DATABASE_URL` set to check this.
-- The client in a real browser. IndexedDB, the Web Locks API and the passkey dialog are simulated in the tests.
-- Any edge runtime, and Next.js.
+- The Postgres adapter on Bun.
+- Firefox and Safari, and the browser's own passkey dialog. Passkeys were exercised with a software authenticator.
+- Deno, Cloudflare Workers and other edge runtimes, and Next.js.
 - Publishing to a registry.
 
 ## Publishing
@@ -137,3 +147,4 @@ The implementation follows the approved proposal, with these changes. Each came 
 6. **Express:** `req.auth` is typed as optional and `getAuth(req)` reads it. `errorHandler` is new. `requirePermission` takes an optional resource loader.
 7. **Client:** `reauthenticate({ method: 'passkey' })` runs the browser ceremony itself. `cancelMfa`, `changePassword`, `mfa.status` and `dispose` are new. `fetch` retries after any 401, not only after token errors.
 8. **`risk.whenStepUpUnavailable` defaults to `'allow'`**, where the proposal said `'deny'`. Under `'deny'`, a user without a second factor was refused after a single mistyped password on a new device. Changed after review of the finished build.
+9. **A Hono adapter**, `@acme/auth-server/hono`, which the proposal did not include. Added on request after the build.

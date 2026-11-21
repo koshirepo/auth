@@ -24,6 +24,10 @@
       "types": "./dist/express/index.d.ts",
       "default": "./dist/express/index.js"
     },
+    "./hono": {
+      "types": "./dist/hono/index.d.ts",
+      "default": "./dist/hono/index.js"
+    },
     "./adapters/memory": {
       "types": "./dist/adapters/memory.d.ts",
       "default": "./dist/adapters/memory.js"
@@ -59,6 +63,7 @@
   "peerDependencies": {
     "argon2": "^0.45.0",
     "express": "^5.0.0",
+    "hono": "^4.2.0",
     "pg": "^8.0.0",
     "vitest": ">=3.0.0"
   },
@@ -67,6 +72,9 @@
       "optional": true
     },
     "express": {
+      "optional": true
+    },
+    "hono": {
       "optional": true
     },
     "pg": {
@@ -82,6 +90,7 @@
     "@types/pg": "^8.11.0",
     "argon2": "^0.45.2",
     "express": "^5.3.0",
+    "hono": "^4.13.0",
     "pg": "^8.23.1"
   }
 }

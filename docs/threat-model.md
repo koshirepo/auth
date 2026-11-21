@@ -188,7 +188,7 @@ Out of scope: an attacker who executes code on the server, a compromised browser
 14. **Constant-time comparison is implemented in JavaScript.** It avoids early exit, but a JavaScript engine gives no hard timing guarantee. The compared values are short-lived and rate-limited.
 15. **Your sign-up flow can reveal which identifiers exist.** `users.create` reports a taken identifier. How to present that is up to you.
 16. **Audit integrity is the sink's job.** The library does not sign or chain events.
-17. **Not verified in this repository:** the Postgres adapter under true multi-connection concurrency (the tests run it in PGlite, on one connection), the client in a real browser, and any edge runtime.
+17. **Not verified:** the Postgres adapter under true multi-connection concurrency (the tests run it in PGlite, on one connection), browsers other than Chromium, the browser's own passkey dialog, and runtimes other than Node and Bun. The Chromium and Bun checks were done by hand and are not part of the automated suite. The README lists exactly what was checked.
 
 ## 7. Deployment checklist
 

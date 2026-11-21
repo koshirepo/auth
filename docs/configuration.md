@@ -3,7 +3,7 @@
 Every option, its default and what it does. Options are grouped by the function they are passed to.
 
 - [`createAuth`](#createauth) — the server
-- [`createAuthHandler` and `expressAuth`](#http-layer) — the HTTP layer
+- [`createAuthHandler`, `expressAuth` and `honoAuth`](#http-layer) — the HTTP layer
 - [`createAccessTokenVerifier`](#createaccesstokenverifier) — resource servers
 - [`postgresAdapter`, `memoryAdapter`](#adapters)
 - [`argon2id`](#argon2id)
@@ -171,14 +171,14 @@ These build `auth.authorizer` and are used by `auth.authorize` and the Express `
 
 ## HTTP layer
 
-Options of `createAuthHandler(auth, options)`, `createHttpAuthContext(auth, options)` and `expressAuth(auth, options)`.
+Options of `createAuthHandler(auth, options)`, `createHttpAuthContext(auth, options)`, `expressAuth(auth, options)` and `honoAuth(auth, options)`.
 
 | Option | Default | Purpose |
 |---|---|---|
 | `publicOrigin` | required | The origin browsers use to reach this server, for example `https://api.example.com`. No path, no trailing slash. DPoP proofs are checked against it, so behind a proxy it is the external origin, not the internal one. |
 | `basePath` | `'/auth'` | Where the endpoints are mounted. |
 | `allowedOrigins` | `[publicOrigin]` | Origins of the pages allowed to call the endpoints. Used for CORS and for rejecting cross-site requests. Exact matches only. |
-| `clientIp` | none | Returns the client IP for risk scoring, throttling and the audit log. With `createAuthHandler` it receives the Fetch `Request`. With `expressAuth` it receives the Express request and defaults to `req.ip`. |
+| `clientIp` | none | Returns the client IP for risk scoring, throttling and the audit log. With `createAuthHandler` it receives the Fetch `Request`. With `expressAuth` it receives the Express request and defaults to `req.ip`. With `honoAuth` it receives the Hono context and has no default. |
 | `maxBodyBytes` | `65536` | Largest request body accepted. |
 | `onError` | none | Called with unexpected errors before a generic 500 is sent. Log them here. |
 
