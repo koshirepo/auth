@@ -197,7 +197,7 @@ Out of scope: an attacker who executes code on the server, a compromised browser
 - [ ] Generate `dataKeys` with a cryptographic random source, store them in a secret manager, and keep them out of the database and out of version control.
 - [ ] Set `publicOrigin` to the exact origin browsers use. Behind a proxy it is not the internal address.
 - [ ] List only your own app origins in `allowedOrigins`.
-- [ ] Implement `clientIp` from a header your proxy sets and strips from incoming requests. With Express, configure `trust proxy`.
+- [ ] Implement `clientIp` from a header your proxy sets and strips from incoming requests. With Express, configure `trust proxy`. With Hono there is no default: until you set `clientIp`, no address reaches risk scoring, throttling or the audit log.
 - [ ] Use the Postgres adapter, or another shared store, as soon as you run more than one instance.
 - [ ] Call `auth.maintenance.purgeExpired()` from a scheduled job.
 - [ ] Set `risk.whenStepUpUnavailable: 'deny'` once every user has a second factor or a passkey (risk 9 above).

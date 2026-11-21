@@ -494,13 +494,13 @@ The module also exports `getAuth(req)`, which returns the verified token of a re
 const { routes, requireAuth, requirePermission, onError } = honoAuth(auth, options);
 ```
 
-Only types are imported from Hono, so the adapter adds no runtime dependency and runs wherever Hono does.
+Only types are imported from Hono, so the adapter adds no runtime dependency and runs wherever Hono does. It needs Hono 4.2 or later. Hono 5 is not supported yet: its release candidate calls error handlers differently, so `onError` does not work with it.
 
 | Member | Purpose |
 |---|---|
 | `routes` | Middleware that serves the endpoints of section 4 and passes every other request on. Mount it with `app.use(routes)`, before your own routes. It still works if an earlier middleware has read the body through Hono. |
 | `requireAuth({ assurance?, maxAuthAgeSec?, checkSession? }?)` | Verifies the token and proof and sets `c.get('auth')` to `{ subject, context, claims }`. Otherwise responds with the error. It does not read the body. |
-| `requirePermission(permission, { resource? }?)` | Checks the permission through `auth.authorize`. `resource(c)` loads the object the policies should see and may be async. Use it after `requireAuth`. |
+| `requirePermission(permission, { resource? }?)` | Checks the permission through `auth.authorize`. `resource(c)` loads the object the policies should see and may be async. Its context does not carry the route's path type, so `c.req.param('id')` is `string \| undefined` there. Use it after `requireAuth`. |
 | `onError` | For `app.onError(onError)`. Formats `AuthError`s thrown in your handlers. Any other error is reported to the `onError` option and answered with a generic 500 in the same format. To keep your own handling for other errors, call it only when `isAuthError(error)` is true. |
 
 The module also exports `getAuth(c)`, which throws `TOKEN_MISSING` if `requireAuth` did not run, and the type `AuthEnv`. Routes behind `requireAuth()` see `c.get('auth')` typed without further work. Add `AuthEnv` to your app's environment type only if you read it elsewhere.

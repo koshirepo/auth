@@ -546,7 +546,13 @@ What is different from a single-page app:
 
 ## 13. Hono, Bun and other Fetch-based servers
 
-The Hono adapter mirrors the Express one. It is covered by the automated tests, and the setup below was also run on Bun 1.4 with Hono 4, with a React app built by Vite 8, in a Chromium browser.
+The Hono adapter mirrors the Express one. It needs Hono 4.2 or later and is covered by the automated tests. The server below was also run as written on Bun 1.4 with Hono 4.13. Hono 5 is not supported yet: its release candidate calls error handlers differently.
+
+Besides the packages from section 1, without `express`, install Hono and its Bun adapter:
+
+```powershell
+bun add hono @hono/bun
+```
 
 ```ts
 // server.ts
@@ -616,7 +622,8 @@ export default { port: 3000, fetch: app.fetch };
 
 `auth.ts` is the one from section 3, and the middleware behaves as the table in section 4 describes. What differs from Express:
 
-- **`clientIp` has no default.** Where the address comes from depends on the runtime. `getConnInfo` from `hono/bun` reads it from Bun's connection.
+- **`clientIp` has no default.** Where the address comes from depends on the runtime. On Bun, `getConnInfo` reads it from the connection. It comes from `@hono/bun`, which needs Hono 4.13.9 or later. From Hono 4.4 until then, `hono/bun` exports the same function. It throws when the app is not being served by Bun, as in a test that calls `app.request()`, and a `clientIp` that throws fails the request with a 500. In such a test, pass a stand-in for Bun's server as the third argument: `app.request(path, init, { requestIP: () => null })`.
+- **Route parameters in a `resource` loader.** Its context does not carry the route's path type, as in any Hono middleware created outside the route, so `c.req.param('id')` is `string | undefined` there. In the route's own handler it is typed as usual.
 - **`onError` answers every error.** `AuthError`s get their own status and code. Anything else is reported to the `onError` option and answered with a generic 500. To keep your own handling for other errors, branch first: `app.onError((error, c) => (isAuthError(error) ? onError(error, c) : yours(error, c)))`.
 - **Body parsing.** `routes` copes with an earlier middleware that read the body through Hono, such as `c.req.json()`. It cannot recover a body that was consumed from `c.req.raw` directly.
 
@@ -643,7 +650,7 @@ export const bunArgon2id: PasswordHasher = {
 
 Not tried on Bun: the Postgres adapter. It only needs `query(text, params)` returning `{ rows }`, which a `pg` Pool provides.
 
-On the client nothing changes. With Vite, the app from section 6 works as written, in the dev server and in a production build. When the Vite dev server and the API run on different ports, list the dev server's origin in `allowedOrigins`, in the `cors()` options and in `passkeys.origins`, as in section 11.
+On the client nothing changes. A React app using the hooks from section 6 was built with Vite 8 and run in a browser against a Bun server like the one above, from the dev server and from a production build. When the Vite dev server and the API run on different ports, list the dev server's origin in `allowedOrigins`, in the `cors()` options and in `passkeys.origins`, as in section 11.
 
 **Other servers.** Anything built on `Request` and `Response` can use the pieces the adapters are made of, as the Next.js section does: route the auth paths to `createAuthHandler(auth, options)`, and call `createHttpAuthContext(auth, options).authenticate(request)` in front of your own routes.
 

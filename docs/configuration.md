@@ -178,7 +178,7 @@ Options of `createAuthHandler(auth, options)`, `createHttpAuthContext(auth, opti
 | `publicOrigin` | required | The origin browsers use to reach this server, for example `https://api.example.com`. No path, no trailing slash. DPoP proofs are checked against it, so behind a proxy it is the external origin, not the internal one. |
 | `basePath` | `'/auth'` | Where the endpoints are mounted. |
 | `allowedOrigins` | `[publicOrigin]` | Origins of the pages allowed to call the endpoints. Used for CORS and for rejecting cross-site requests. Exact matches only. |
-| `clientIp` | none | Returns the client IP for risk scoring, throttling and the audit log. With `createAuthHandler` it receives the Fetch `Request`. With `expressAuth` it receives the Express request and defaults to `req.ip`. With `honoAuth` it receives the Hono context and has no default. |
+| `clientIp` | none | Returns the client IP for risk scoring, throttling and the audit log. With `createAuthHandler` it receives the Fetch `Request`. With `expressAuth` it receives the Express request and defaults to `req.ip`. With `honoAuth` it receives the Hono context and has no default. If the function throws, the request fails with a 500 rather than carrying on without an address. |
 | `maxBodyBytes` | `65536` | Largest request body accepted. |
 | `onError` | none | Called with unexpected errors before a generic 500 is sent. Log them here. |
 

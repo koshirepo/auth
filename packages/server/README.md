@@ -14,6 +14,6 @@ The server side of the auth library: signing keys and JWKS, access tokens, sessi
 | `@acme/auth-server/password/argon2` | Argon2id hasher. Needs the `argon2` package. |
 | `@acme/auth-server/testing` | Fake clock and the adapter contract test suite. Needs Vitest. |
 
-Optional peer dependencies: `argon2` for password hashing, `pg` or any driver with `query(text, params)` for Postgres, `express` for the Express adapter, `hono` for the Hono adapter.
+Optional peer dependencies: `argon2` for password hashing, `pg` or any driver with `query(text, params)` for Postgres, `express` 5 for the Express adapter, `hono` 4.2 or later for the Hono adapter. Hono 5 is not supported yet.
 
 Start with the [integration guide](../../docs/integration-express.md), which covers Express, Hono on Bun and Next.js. The [configuration reference](../../docs/configuration.md), [API reference](../../docs/api-reference.md) and [threat model](../../docs/threat-model.md) cover the rest.

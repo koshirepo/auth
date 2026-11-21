@@ -34,8 +34,8 @@ export interface HonoAuthOptions extends Omit<AuthHandlerOptions, 'clientIp' | '
    * default, because where the address comes from depends on the runtime and on what stands in
    * front of it. On Bun without a proxy: `(c) => getConnInfo(c).remote.address`, with `getConnInfo`
    * from `@hono/bun`. Behind a proxy, read the header your proxy sets and strips from incoming
-   * requests. If this function throws, the request is answered with a 500 and the error is
-   * reported to `onError`.
+   * requests. If this function throws, the request fails with a 500 rather than carrying on
+   * without an address.
    */
   clientIp?: (c: AnyContext) => string | undefined;
   /** Called with unexpected errors, before a generic 500 is sent. Log them here. */

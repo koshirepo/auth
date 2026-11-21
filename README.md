@@ -112,9 +112,10 @@ Verified by the automated suite:
 
 Checked by hand on 2026-11-21, with the packages packed as for publishing and installed into a separate project:
 
-- **Bun 1.4 with Hono 4.** Login, refresh rotation and reuse detection, TOTP, recovery codes, passkeys, step-up and the standalone verifier, with password hashing through both the `argon2` addon and `Bun.password`. In-memory adapter.
+- **Bun 1.4 with Hono 4.13, through the Hono adapter.** Login, refresh rotation and reuse detection, TOTP, recovery codes, passkeys, step-up and the standalone verifier, with password hashing through both the `argon2` addon and `Bun.password`. In-memory adapter. The Hono server in the integration guide was also copied out of the guide unchanged, type-checked against the packed declarations, started with `bun run` and driven over HTTP, down to the client's address reaching the audit log.
+- **Hono versions.** The adapter's tests were also run against Hono 4.2, 4.3, 4.4, 4.5 and 4.6, where they pass. One test fails on 4.0 and 4.1, and the error handler does not work on 5.0.0-rc.1, hence the supported range `^4.2.0`.
 - **Vite 8 with React 19.** Production build and dev server. Nothing from Node ends up in the browser bundle, and the passkey helper is split into a chunk that loads on first use.
-- **A Chromium 156 browser.** Sign-in, session restore after a reload and in a new tab, device-bound API calls, sign-out reaching the other tab, and two tabs each making 100 refreshes at the same moment without tripping reuse detection. Tried with the app served by the API, and with the app on another origin. The refresh cookie was invisible to script, nothing was written to Web Storage, and the device key could not be exported.
+- **A Chromium 156 browser, against the Hono adapter on Bun.** Sign-in, session restore after a reload and in a new tab, device-bound API calls, sign-out reaching the other tab, and two tabs each making 100 refreshes at the same moment without tripping reuse detection. Tried with the app served by the API, and with the app on another origin. The refresh cookie was invisible to script, nothing was written to Web Storage, and the device key could not be exported.
 
 These checks are not part of the automated suite, so they do not guard against regressions.
 
@@ -124,6 +125,7 @@ Not verified:
 - The Postgres adapter on Bun.
 - Firefox and Safari, and the browser's own passkey dialog. Passkeys were exercised with a software authenticator.
 - Deno, Cloudflare Workers and other edge runtimes, and Next.js.
+- Hono 5. Its release candidate changes how error handlers are called, and the adapter's `onError` does not work with it.
 - Publishing to a registry.
 
 ## Publishing
