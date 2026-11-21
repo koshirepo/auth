@@ -1,5 +1,5 @@
 {
-  "name": "@koshi-repo/auth-core",
+  "name": "@koshirepo/auth-core",
   "version": "0.1.0",
   "description": "Shared types, errors and RBAC/ABAC policy evaluation for the auth library. No runtime dependencies.",
   "repository": {

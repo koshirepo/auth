@@ -1,5 +1,5 @@
 {
-  "name": "@koshi-repo/auth-client",
+  "name": "@koshirepo/auth-client",
   "version": "0.1.0",
   "description": "Headless browser client for the auth library: session state, automatic refresh, device binding, MFA and passkey flows, route guards. No styling.",
   "repository": {
@@ -29,7 +29,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@koshi-repo/auth-core": "workspace:*",
+    "@koshirepo/auth-core": "workspace:*",
     "jose": "^6.2.18"
   },
   "peerDependencies": {
@@ -45,7 +45,7 @@
     }
   },
   "devDependencies": {
-    "@koshi-repo/auth-server": "workspace:*",
+    "@koshirepo/auth-server": "workspace:*",
     "@simplewebauthn/browser": "^14.0.0",
     "@simplewebauthn/server": "^14.1.0",
     "@testing-library/react": "^16.0.0",

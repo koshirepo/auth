@@ -1,4 +1,4 @@
-import { DpopError } from '@koshi-repo/auth-core';
+import { DpopError } from '@koshirepo/auth-core';
 import { EmbeddedJWK, calculateJwkThumbprint, decodeProtectedHeader, jwtVerify, type JWK } from 'jose';
 import { constantTimeEqual, sha256Base64Url } from '../util/crypto.js';
 

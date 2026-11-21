@@ -7,12 +7,12 @@ export default defineConfig({
   resolve: {
     // Tests run against the source of the sibling packages, so nothing needs building first.
     alias: [
-      { find: /^@koshi-repo\/auth-core$/, replacement: resolve('../core/src/index.ts') },
-      { find: /^@koshi-repo\/auth-server$/, replacement: resolve('../server/src/index.ts') },
-      { find: /^@koshi-repo\/auth-server\/http$/, replacement: resolve('../server/src/http/index.ts') },
-      { find: /^@koshi-repo\/auth-server\/adapters\/memory$/, replacement: resolve('../server/src/adapters/memory.ts') },
-      { find: /^@koshi-repo\/auth-server\/password\/argon2$/, replacement: resolve('../server/src/password/argon2.ts') },
-      { find: /^@koshi-repo\/auth-server\/testing$/, replacement: resolve('../server/src/testing/index.ts') },
+      { find: /^@koshirepo\/auth-core$/, replacement: resolve('../core/src/index.ts') },
+      { find: /^@koshirepo\/auth-server$/, replacement: resolve('../server/src/index.ts') },
+      { find: /^@koshirepo\/auth-server\/http$/, replacement: resolve('../server/src/http/index.ts') },
+      { find: /^@koshirepo\/auth-server\/adapters\/memory$/, replacement: resolve('../server/src/adapters/memory.ts') },
+      { find: /^@koshirepo\/auth-server\/password\/argon2$/, replacement: resolve('../server/src/password/argon2.ts') },
+      { find: /^@koshirepo\/auth-server\/testing$/, replacement: resolve('../server/src/testing/index.ts') },
     ],
   },
   test: {

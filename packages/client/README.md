@@ -1,4 +1,4 @@
-# @koshi-repo/auth-client
+# @koshirepo/auth-client
 
 The browser side of the auth library. Headless: it has logic and state, and no markup or styling.
 
@@ -11,17 +11,17 @@ The browser side of the auth library. Headless: it has logic and state, and no m
 
 | Import | Contents |
 |---|---|
-| `@koshi-repo/auth-client` | `createAuthClient` and its types. Works with any framework, or none. |
-| `@koshi-repo/auth-client/react` | `AuthProvider`, `useAuth`, `useLogin`, `useGuard`, `useCan`, `AuthGuard` |
+| `@koshirepo/auth-client` | `createAuthClient` and its types. Works with any framework, or none. |
+| `@koshirepo/auth-client/react` | `AuthProvider`, `useAuth`, `useLogin`, `useGuard`, `useCan`, `AuthGuard` |
 
 Optional peer dependencies: `@simplewebauthn/browser` for passkeys, `react` 18 or later for the hooks.
 
 ```ts
-import { createAuthClient } from '@koshi-repo/auth-client';
+import { createAuthClient } from '@koshirepo/auth-client';
 
 const authClient = createAuthClient({ baseUrl: 'https://api.example.com/auth' });
 await authClient.loginWithPassword({ identifier, password });
 const response = await authClient.fetch('https://api.example.com/invoices');
 ```
 
-See the [integration guide](../../docs/integration-express.md#6-the-browser-client) and the [API reference](../../docs/api-reference.md#7-koshi-repoauth-client).
+See the [integration guide](../../docs/integration-express.md#6-the-browser-client) and the [API reference](../../docs/api-reference.md#7-koshirepoauth-client).

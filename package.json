@@ -1,5 +1,5 @@
 {
-  "name": "koshi-repo-auth",
+  "name": "koshirepo-auth",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.25.0",

@@ -11,10 +11,10 @@ The server code in sections 2 to 4 is exercised end to end by `packages/server/t
 - The web app and the API on the same registrable domain, for example `app.example.com` and `api.example.com`. The refresh cookie is `SameSite=Strict`, so two unrelated domains will not work.
 - HTTPS in production. The refresh cookie is `Secure`. For local development see [section 11](#11-local-development).
 
-The package scope `@koshi-repo` is a placeholder. Replace it with your own scope, and point that scope at your registry in `.npmrc`:
+The package scope `@koshirepo` is a placeholder. Replace it with your own scope, and point that scope at your registry in `.npmrc`:
 
 ```ini
-@koshi-repo:registry=https://npm.your-company.example/
+@koshirepo:registry=https://npm.your-company.example/
 ```
 
 ## 1. Install
@@ -22,13 +22,13 @@ The package scope `@koshi-repo` is a placeholder. Replace it with your own scope
 In the API:
 
 ```powershell
-pnpm add @koshi-repo/auth-core @koshi-repo/auth-server argon2 pg express
+pnpm add @koshirepo/auth-core @koshirepo/auth-server argon2 pg express
 ```
 
 In the web app:
 
 ```powershell
-pnpm add @koshi-repo/auth-core @koshi-repo/auth-client @simplewebauthn/browser
+pnpm add @koshirepo/auth-core @koshirepo/auth-client @simplewebauthn/browser
 ```
 
 `argon2` is a native module that ships prebuilt binaries. pnpm asks whether its install script may run. It does not need to: add this to `pnpm-workspace.yaml`.
@@ -44,7 +44,7 @@ Put these in a module both the API and the web app can import, so the interface 
 
 ```ts
 // access.ts
-import { defineRbac, definePolicy, deny } from '@koshi-repo/auth-core';
+import { defineRbac, definePolicy, deny } from '@koshirepo/auth-core';
 
 export const rbac = defineRbac({
   permissions: ['invoice:read', 'invoice:write', 'invoice:delete'],
@@ -83,9 +83,9 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
 
 ```ts
 // auth.ts
-import { createAuth } from '@koshi-repo/auth-server';
-import { migrate, postgresAdapter } from '@koshi-repo/auth-server/adapters/postgres';
-import { argon2id } from '@koshi-repo/auth-server/password/argon2';
+import { createAuth } from '@koshirepo/auth-server';
+import { migrate, postgresAdapter } from '@koshirepo/auth-server/adapters/postgres';
+import { argon2id } from '@koshirepo/auth-server/password/argon2';
 import pg from 'pg';
 import { policies, rbac } from './access.js';
 
@@ -120,7 +120,7 @@ Do not set it earlier. With the default weights it would refuse a user without a
 
 ```ts
 // server.ts
-import { expressAuth, getAuth } from '@koshi-repo/auth-server/express';
+import { expressAuth, getAuth } from '@koshirepo/auth-server/express';
 import express from 'express';
 import { auth } from './auth.js';
 import { invoices } from './invoices.js';
@@ -216,7 +216,7 @@ Without `checkSession`, an access token keeps working for up to 15 minutes after
 The library has no sign-up endpoint. Create users from your own sign-up flow, an admin tool or a seed script:
 
 ```ts
-import { isAuthError } from '@koshi-repo/auth-core';
+import { isAuthError } from '@koshirepo/auth-core';
 import { auth } from './auth.js';
 
 try {
@@ -239,7 +239,7 @@ Email verification and password reset are yours to build as well. `auth.users.se
 
 ```ts
 // auth-client.ts
-import { createAuthClient } from '@koshi-repo/auth-client';
+import { createAuthClient } from '@koshirepo/auth-client';
 import { policies, rbac } from './access';
 
 export const authClient = createAuthClient({
@@ -252,7 +252,7 @@ Creating the client starts one request that restores the session from the refres
 
 ```tsx
 // main.tsx
-import { AuthProvider } from '@koshi-repo/auth-client/react';
+import { AuthProvider } from '@koshirepo/auth-client/react';
 import { authClient } from './auth-client';
 
 root.render(
@@ -267,7 +267,7 @@ root.render(
 `useLogin` tracks the request and its error for you. The same component handles the second factor, because the state tells you when one is needed.
 
 ```tsx
-import { useLogin } from '@koshi-repo/auth-client/react';
+import { useLogin } from '@koshirepo/auth-client/react';
 import { useState } from 'react';
 
 export function SignIn() {
@@ -326,7 +326,7 @@ If you use another HTTP library, get the token with `await authClient.getAccessT
 ### Showing and hiding interface
 
 ```tsx
-import { AuthGuard, useAuth, useCan } from '@koshi-repo/auth-client/react';
+import { AuthGuard, useAuth, useCan } from '@koshirepo/auth-client/react';
 
 function InvoiceActions({ invoice }: { invoice: Invoice }) {
   const canEdit = useCan('invoice:write', invoice);
@@ -426,7 +426,7 @@ await auth.maintenance.purgeExpired();
 **Audit log.** By default events are written to the `audit_events` table. To also stream them:
 
 ```ts
-import { consoleSink, storeSink } from '@koshi-repo/auth-server';
+import { consoleSink, storeSink } from '@koshirepo/auth-server';
 
 audit: { sinks: [storeSink(adapter.audit), consoleSink()] },
 ```
@@ -436,7 +436,7 @@ Events never contain passwords, tokens, codes or keys.
 **Other services.** A service that only needs to check tokens does not need the database:
 
 ```ts
-import { createAccessTokenVerifier } from '@koshi-repo/auth-server/verifier';
+import { createAccessTokenVerifier } from '@koshirepo/auth-server/verifier';
 
 const verify = createAccessTokenVerifier({
   issuer: 'https://api.example.com',
@@ -471,9 +471,9 @@ The refresh cookie is always `Secure`. Chrome and Firefox treat `http://localhos
 For tests, use the memory adapter, small Argon2 parameters and a fake clock:
 
 ```ts
-import { memoryAdapter } from '@koshi-repo/auth-server/adapters/memory';
-import { argon2id } from '@koshi-repo/auth-server/password/argon2';
-import { createFakeClock } from '@koshi-repo/auth-server/testing';
+import { memoryAdapter } from '@koshirepo/auth-server/adapters/memory';
+import { argon2id } from '@koshirepo/auth-server/password/argon2';
+import { createFakeClock } from '@koshirepo/auth-server/testing';
 
 const clock = createFakeClock();
 const auth = createAuth({
@@ -494,7 +494,7 @@ The handler takes a `Request` and returns a `Response`, which is what route hand
 
 ```ts
 // lib/auth-http.ts
-import { createAuthHandler, createHttpAuthContext } from '@koshi-repo/auth-server/http';
+import { createAuthHandler, createHttpAuthContext } from '@koshirepo/auth-server/http';
 import { auth } from './auth';
 
 const options = { publicOrigin: 'https://example.com' };   // one origin: allowedOrigins defaults to it
@@ -556,7 +556,7 @@ bun add hono @hono/bun
 
 ```ts
 // server.ts
-import { honoAuth } from '@koshi-repo/auth-server/hono';
+import { honoAuth } from '@koshirepo/auth-server/hono';
 import { getConnInfo } from '@hono/bun';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
@@ -630,7 +630,7 @@ export default { port: 3000, fetch: app.fetch };
 **Password hashing on Bun.** `argon2id()` works under Bun as it is. If you would rather not ship a native addon, Bun's built-in `Bun.password` fits the `PasswordHasher` interface:
 
 ```ts
-import type { PasswordHasher } from '@koshi-repo/auth-server';
+import type { PasswordHasher } from '@koshirepo/auth-server';
 
 export const bunArgon2id: PasswordHasher = {
   hash: (password) => Bun.password.hash(password, { algorithm: 'argon2id', memoryCost: 19_456, timeCost: 2 }),

@@ -1,4 +1,4 @@
-import type { AssuranceLevel, AuthMethod, PasskeyInfo, PublicUser, SessionInfo } from '@koshi-repo/auth-core';
+import type { AssuranceLevel, AuthMethod, PasskeyInfo, PublicUser, SessionInfo } from '@koshirepo/auth-core';
 import type { PasskeyCredential, Session, User } from '../adapters/types.js';
 import { toEpochSec } from '../util/clock.js';
 

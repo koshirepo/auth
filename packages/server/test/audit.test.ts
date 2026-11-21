@@ -1,4 +1,4 @@
-import { AUDIT_EVENT_TYPES, defineRbac, type AuditEvent } from '@koshi-repo/auth-core';
+import { AUDIT_EVENT_TYPES, defineRbac, type AuditEvent } from '@koshirepo/auth-core';
 import { describe, expect, it, vi } from 'vitest';
 import { memoryAdapter } from '../src/adapters/memory.js';
 import { AuditEmitter } from '../src/audit/emitter.js';

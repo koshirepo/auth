@@ -8,7 +8,7 @@ import {
   type AccessTokenClaims,
   type AuthContext,
   type Subject,
-} from '@koshi-repo/auth-core';
+} from '@koshirepo/auth-core';
 import { SignJWT } from 'jose';
 import type { Session, SessionStore, User } from '../adapters/types.js';
 import type { AuditEmitter } from '../audit/emitter.js';

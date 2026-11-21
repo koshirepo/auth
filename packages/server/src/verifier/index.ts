@@ -5,7 +5,7 @@
  * a way to get the public keys. It uses WebCrypto and `fetch` only, so it also runs on edge
  * runtimes.
  */
-import { ConfigurationError, DpopError, identityFromClaims, type AccessTokenClaims, type AuthContext, type Subject } from '@koshi-repo/auth-core';
+import { ConfigurationError, DpopError, identityFromClaims, type AccessTokenClaims, type AuthContext, type Subject } from '@koshirepo/auth-core';
 import { createLocalJWKSet, createRemoteJWKSet, type JSONWebKeySet, type JWTVerifyGetKey } from 'jose';
 import { memoryReplayStore, validateDpopProof, type ReplayStore } from '../dpop/proof.js';
 import { verifyAccessJwt } from '../tokens/verify.js';

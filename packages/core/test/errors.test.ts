@@ -168,14 +168,14 @@ describe('isAuthError', () => {
 
   it('recognises an error from a second copy of the package by its registered symbol', () => {
     const foreign = Object.create(Error.prototype) as Record<symbol, unknown>;
-    Object.defineProperty(foreign, Symbol.for('@koshi-repo/auth-core:AuthError'), { value: true });
+    Object.defineProperty(foreign, Symbol.for('@koshirepo/auth-core:AuthError'), { value: true });
     expect(foreign instanceof AuthError).toBe(false);
     expect(isAuthError(foreign)).toBe(true);
   });
 
   it('does not expose the brand as an enumerable property', () => {
     const error = new TokenError('TOKEN_EXPIRED');
-    expect(Object.keys(error)).not.toContain('Symbol(@koshi-repo/auth-core:AuthError)');
+    expect(Object.keys(error)).not.toContain('Symbol(@koshirepo/auth-core:AuthError)');
     expect(Object.getOwnPropertySymbols(error).length).toBe(1);
     expect(JSON.stringify({ ...error })).not.toContain('AuthError');
   });

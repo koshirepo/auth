@@ -1,5 +1,5 @@
 {
-  "name": "@koshi-repo/auth-server",
+  "name": "@koshirepo/auth-server",
   "version": "0.1.0",
   "description": "Token issuance and validation, sessions, MFA, passkeys, device binding, risk scoring and audit logging.",
   "repository": {
@@ -60,7 +60,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@koshi-repo/auth-core": "workspace:*",
+    "@koshirepo/auth-core": "workspace:*",
     "@simplewebauthn/server": "^14.1.0",
     "jose": "^6.2.18"
   },

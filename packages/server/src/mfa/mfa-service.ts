@@ -6,7 +6,7 @@ import {
   type AuthMethod,
   type JsonObject,
   type MfaMethod,
-} from '@koshi-repo/auth-core';
+} from '@koshirepo/auth-core';
 import type { AuthAdapter } from '../adapters/types.js';
 import type { AuditEmitter } from '../audit/emitter.js';
 import type { ResolvedConfig } from '../config.js';

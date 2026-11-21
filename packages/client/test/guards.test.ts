@@ -1,4 +1,4 @@
-import type { PublicUser, SessionInfo } from '@koshi-repo/auth-core';
+import type { PublicUser, SessionInfo } from '@koshirepo/auth-core';
 import { afterEach, describe, expect, it } from 'vitest';
 import { evaluateGuard, type AuthClient, type AuthState } from '../src/index.js';
 import { PASSWORD, createUser, rbac, setup, signedInTab } from './harness.js';

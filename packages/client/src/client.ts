@@ -18,7 +18,7 @@ import {
   type SessionListResponse,
   type SessionResponse,
   type TotpEnrollmentResponse,
-} from '@koshi-repo/auth-core';
+} from '@koshirepo/auth-core';
 import { broadcastChannel } from './channel.js';
 import { DpopSigner, defaultKeyStore } from './dpop.js';
 import { evaluateGuard, type GuardRequirement, type GuardResult } from './guards.js';

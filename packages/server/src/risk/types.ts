@@ -1,4 +1,4 @@
-import type { RiskDecision } from '@koshi-repo/auth-core';
+import type { RiskDecision } from '@koshirepo/auth-core';
 import type { DeviceRecord, User } from '../adapters/types.js';
 
 export interface GeoLocation {

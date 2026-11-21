@@ -1,4 +1,4 @@
-import { ConfigurationError, type AuditEvent, type JsonValue, type Policy, type Rbac } from '@koshi-repo/auth-core';
+import { ConfigurationError, type AuditEvent, type JsonValue, type Policy, type Rbac } from '@koshirepo/auth-core';
 import type { AuthAdapter, Session, SigningAlgorithm, User } from './adapters/types.js';
 import { storeSink, type AuditSink } from './audit/sinks.js';
 import type { PasswordHasher } from './password/hasher.js';

@@ -1,10 +1,10 @@
-import { defineRbac, definePolicy, deny } from '@koshi-repo/auth-core';
-import { createAuth, memorySink, type AuthConfig } from '@koshi-repo/auth-server';
-import { memoryAdapter } from '@koshi-repo/auth-server/adapters/memory';
-import { createAuthHandler, createHttpAuthContext } from '@koshi-repo/auth-server/http';
-import { argon2id } from '@koshi-repo/auth-server/password/argon2';
+import { defineRbac, definePolicy, deny } from '@koshirepo/auth-core';
+import { createAuth, memorySink, type AuthConfig } from '@koshirepo/auth-server';
+import { memoryAdapter } from '@koshirepo/auth-server/adapters/memory';
+import { createAuthHandler, createHttpAuthContext } from '@koshirepo/auth-server/http';
+import { argon2id } from '@koshirepo/auth-server/password/argon2';
 import { createHmac } from 'node:crypto';
-import { createFakeClock, type FakeClock } from '@koshi-repo/auth-server/testing';
+import { createFakeClock, type FakeClock } from '@koshirepo/auth-server/testing';
 import {
   createAuthClient,
   memoryKeyStore,

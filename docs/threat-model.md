@@ -7,13 +7,13 @@ This document says what the library defends against, how, where each defence is 
 ```text
 Browser (app origin)                     Server (API origin, same site)             Storage
 ┌──────────────────────────┐  HTTPS     ┌───────────────────────────────┐          ┌──────────┐
-│ your app                 │◀──────────▶│ @koshi-repo/auth-server             │◀────────▶│ Postgres │
-│ @koshi-repo/auth-client        │            │   HTTP handler / Express      │          └──────────┘
+│ your app                 │◀──────────▶│ @koshirepo/auth-server             │◀────────▶│ Postgres │
+│ @koshirepo/auth-client        │            │   HTTP handler / Express      │          └──────────┘
 │  access token: memory    │            │   services, adapters          │
 │  refresh token: cookie   │            └───────────────────────────────┘
 │  device key: IndexedDB   │  HTTPS     ┌───────────────────────────────┐
 │                          │◀──────────▶│ resource servers              │  fetch the JWKS
-└──────────────────────────┘            │   @koshi-repo/auth-server/verifier  │  from the auth server
+└──────────────────────────┘            │   @koshirepo/auth-server/verifier  │  from the auth server
                                         └───────────────────────────────┘
 ```
 

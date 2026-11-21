@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { AuthenticationError, type PublicUser, type SessionInfo } from '@koshi-repo/auth-core';
+import { AuthenticationError, type PublicUser, type SessionInfo } from '@koshirepo/auth-core';
 import { act, cleanup, render, renderHook, screen } from '@testing-library/react';
 import { createElement, type ReactNode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';

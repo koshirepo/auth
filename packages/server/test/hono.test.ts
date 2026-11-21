@@ -1,4 +1,4 @@
-import { allow, defineRbac, definePolicy, deny, isAuthError } from '@koshi-repo/auth-core';
+import { allow, defineRbac, definePolicy, deny, isAuthError } from '@koshirepo/auth-core';
 import { Hono } from 'hono';
 import { describe, expect, it } from 'vitest';
 import { getAuth, honoAuth, type AuthEnv, type HonoAuthOptions } from '../src/hono/index.js';

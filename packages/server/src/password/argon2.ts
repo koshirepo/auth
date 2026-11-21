@@ -1,4 +1,4 @@
-import { ConfigurationError } from '@koshi-repo/auth-core';
+import { ConfigurationError } from '@koshirepo/auth-core';
 import * as argon2 from 'argon2';
 import type { PasswordHasher } from './hasher.js';
 

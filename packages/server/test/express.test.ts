@@ -1,6 +1,6 @@
 import type { Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { allow, defineRbac, definePolicy, deny } from '@koshi-repo/auth-core';
+import { allow, defineRbac, definePolicy, deny } from '@koshirepo/auth-core';
 import express, { type Express } from 'express';
 import { afterEach, describe, expect, it } from 'vitest';
 import { expressAuth, getAuth } from '../src/express/index.js';

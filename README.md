@@ -4,11 +4,11 @@ A TypeScript authentication library in three packages: shared types and access c
 
 | Package | Contents | Runtime dependencies |
 |---|---|---|
-| [`@koshi-repo/auth-core`](packages/core) | Types, typed errors with stable codes, RBAC and ABAC policy evaluation, audit event types, HTTP wire types | None |
-| [`@koshi-repo/auth-server`](packages/server) | Signing keys and JWKS, access tokens, sessions and refresh rotation, password login, TOTP and recovery codes, passkeys, device binding, risk scoring, audit log, persistence adapters, HTTP handler, Express and Hono adapters | `jose`, `@simplewebauthn/server` |
-| [`@koshi-repo/auth-client`](packages/client) | Session state, automatic refresh, device key and proofs, MFA and passkey flows, route guards, React hooks. No styling. | `jose` |
+| [`@koshirepo/auth-core`](packages/core) | Types, typed errors with stable codes, RBAC and ABAC policy evaluation, audit event types, HTTP wire types | None |
+| [`@koshirepo/auth-server`](packages/server) | Signing keys and JWKS, access tokens, sessions and refresh rotation, password login, TOTP and recovery codes, passkeys, device binding, risk scoring, audit log, persistence adapters, HTTP handler, Express and Hono adapters | `jose`, `@simplewebauthn/server` |
+| [`@koshirepo/auth-client`](packages/client) | Session state, automatic refresh, device key and proofs, MFA and passkey flows, route guards, React hooks. No styling. | `jose` |
 
-`@koshi-repo` is a placeholder scope. Replace it across the repository with your own before publishing.
+`@koshirepo` is a placeholder scope. Replace it across the repository with your own before publishing.
 
 ## What it does
 
@@ -28,10 +28,10 @@ A TypeScript authentication library in three packages: shared types and access c
 Server:
 
 ```ts
-import { createAuth } from '@koshi-repo/auth-server';
-import { migrate, postgresAdapter } from '@koshi-repo/auth-server/adapters/postgres';
-import { expressAuth } from '@koshi-repo/auth-server/express';
-import { argon2id } from '@koshi-repo/auth-server/password/argon2';
+import { createAuth } from '@koshirepo/auth-server';
+import { migrate, postgresAdapter } from '@koshirepo/auth-server/adapters/postgres';
+import { expressAuth } from '@koshirepo/auth-server/express';
+import { argon2id } from '@koshirepo/auth-server/password/argon2';
 
 await migrate(pool);
 
@@ -56,7 +56,7 @@ app.use(errorHandler);
 Browser:
 
 ```ts
-import { createAuthClient } from '@koshi-repo/auth-client';
+import { createAuthClient } from '@koshirepo/auth-client';
 
 const authClient = createAuthClient({ baseUrl: 'https://api.example.com/auth' });
 
@@ -154,4 +154,4 @@ The implementation follows the approved proposal, with these changes. Each came 
 6. **Express:** `req.auth` is typed as optional and `getAuth(req)` reads it. `errorHandler` is new. `requirePermission` takes an optional resource loader.
 7. **Client:** `reauthenticate({ method: 'passkey' })` runs the browser ceremony itself. `cancelMfa`, `changePassword`, `mfa.status` and `dispose` are new. `fetch` retries after any 401, not only after token errors.
 8. **`risk.whenStepUpUnavailable` defaults to `'allow'`**, where the proposal said `'deny'`. Under `'deny'`, a user without a second factor was refused after a single mistyped password on a new device. Changed after review of the finished build.
-9. **A Hono adapter**, `@koshi-repo/auth-server/hono`, which the proposal did not include. Added on request after the build.
+9. **A Hono adapter**, `@koshirepo/auth-server/hono`, which the proposal did not include. Added on request after the build.

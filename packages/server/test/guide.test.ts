@@ -7,7 +7,7 @@
  */
 import type { Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { defineRbac, definePolicy, deny, isAuthError } from '@koshi-repo/auth-core';
+import { defineRbac, definePolicy, deny, isAuthError } from '@koshirepo/auth-core';
 import { PGlite } from '@electric-sql/pglite';
 import express from 'express';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';

@@ -1,4 +1,4 @@
-import { isAuthError, type AuthError } from '@koshi-repo/auth-core';
+import { isAuthError, type AuthError } from '@koshirepo/auth-core';
 import { EmbeddedJWK, decodeJwt, decodeProtectedHeader, jwtVerify } from 'jose';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { AuthClient, AuthState } from '../src/index.js';

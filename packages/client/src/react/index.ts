@@ -2,7 +2,7 @@
  * React bindings. Everything here is headless: there is no markup, class name or style.
  * `AuthProvider` and `AuthGuard` render only what you pass them.
  */
-import type { AuthError, MfaMethod, PublicUser, SessionInfo } from '@koshi-repo/auth-core';
+import type { AuthError, MfaMethod, PublicUser, SessionInfo } from '@koshirepo/auth-core';
 import {
   createContext,
   createElement,

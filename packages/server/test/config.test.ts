@@ -1,4 +1,4 @@
-import { ConfigurationError, isAuthError } from '@koshi-repo/auth-core';
+import { ConfigurationError, isAuthError } from '@koshirepo/auth-core';
 import { describe, expect, it } from 'vitest';
 import { memoryAdapter } from '../src/adapters/memory.js';
 import { createAuth } from '../src/auth.js';

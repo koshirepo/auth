@@ -1,4 +1,4 @@
-import type { AssuranceLevel, AuditEvent, AuditEventType, AuthMethod, JsonObject, JsonValue, RevokeReason } from '@koshi-repo/auth-core';
+import type { AssuranceLevel, AuditEvent, AuditEventType, AuthMethod, JsonObject, JsonValue, RevokeReason } from '@koshirepo/auth-core';
 
 // ---------------------------------------------------------------------------------------------
 // Users

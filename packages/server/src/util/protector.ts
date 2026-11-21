@@ -1,4 +1,4 @@
-import { ConfigurationError, InternalError } from '@koshi-repo/auth-core';
+import { ConfigurationError, InternalError } from '@koshirepo/auth-core';
 import { CompactEncrypt, compactDecrypt } from 'jose';
 import { hkdfSha256, hmac } from './crypto.js';
 import { fromBase64Url, toBase64Url, utf8Decode, utf8Encode } from './encoding.js';
