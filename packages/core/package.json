@@ -2,6 +2,10 @@
   "name": "@koshi-repo/auth-core",
   "version": "0.1.0",
   "description": "Shared types, errors and RBAC/ABAC policy evaluation for the auth library. No runtime dependencies.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/koshirepo/auth.git"
+  },
   "type": "module",
   "sideEffects": false,
   "exports": {
@@ -14,7 +18,7 @@
     "dist"
   ],
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",

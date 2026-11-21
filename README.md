@@ -130,12 +130,17 @@ Not verified:
 
 ## Publishing
 
-The packages are versioned together with [Changesets](https://github.com/changesets/changesets).
+The packages are public npm packages and are versioned together with [Changesets](https://github.com/changesets/changesets). Each package manifest sets `publishConfig.access` to `public`.
 
-1. Replace the `@koshi-repo` scope and point it at your registry in `.npmrc`.
-2. Record a change: `pnpm changeset`.
-3. Apply versions: `pnpm changeset version`.
-4. Publish: `pnpm release`, which runs the full check first.
+GitHub Actions runs the full check for pull requests and pushes to `main`. The release workflow uses Changesets to open a version PR when changesets are pending, then publishes after that PR is merged.
+
+Before automated releases, configure npm Trusted Publishing for each package on npmjs.com: select GitHub Actions and set the repository to `koshirepo/auth` and workflow filename to `release.yml`. Allow direct `npm publish`. The workflow uses GitHub-hosted runners and OIDC; no npm publish token is stored in GitHub.
+
+The release workflow also needs a GitHub repository secret named `RELEASE_TOKEN`: use a fine-grained token or GitHub App token with contents and pull-request read/write permissions. This lets the Changesets action open a version PR whose CI checks run. It is a GitHub token, not an npm token.
+
+For the first publication, publish the packages once from an npm-authenticated environment, then configure Trusted Publishing for the newly created package pages. After configuring each publisher, complete a successful OIDC publish within two days.
+
+To prepare a release locally, run `pnpm changeset` and commit the generated changeset. The release workflow will create the version PR. `pnpm release` runs the full check before publishing.
 
 ## Differences from the proposal
 

@@ -2,6 +2,10 @@
   "name": "@koshi-repo/auth-server",
   "version": "0.1.0",
   "description": "Token issuance and validation, sessions, MFA, passkeys, device binding, risk scoring and audit logging.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/koshirepo/auth.git"
+  },
   "type": "module",
   "sideEffects": false,
   "engines": {
@@ -49,7 +53,7 @@
     "dist"
   ],
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",

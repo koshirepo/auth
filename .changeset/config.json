@@ -4,7 +4,7 @@
   "commit": false,
   "fixed": [["@koshi-repo/auth-core", "@koshi-repo/auth-server", "@koshi-repo/auth-client"]],
   "linked": [],
-  "access": "restricted",
+  "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": []

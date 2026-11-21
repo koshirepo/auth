@@ -2,6 +2,10 @@
   "name": "@koshi-repo/auth-client",
   "version": "0.1.0",
   "description": "Headless browser client for the auth library: session state, automatic refresh, device binding, MFA and passkey flows, route guards. No styling.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/koshirepo/auth.git"
+  },
   "type": "module",
   "sideEffects": false,
   "exports": {
@@ -18,7 +22,7 @@
     "dist"
   ],
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
