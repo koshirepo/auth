@@ -30,7 +30,7 @@ const RECORD = 'dpop';
  * never exists as bytes that script could read or send anywhere.
  */
 export function indexedDbKeyStore(options: { databaseName?: string } = {}): DpopKeyStore {
-  const databaseName = options.databaseName ?? 'acme-auth';
+  const databaseName = options.databaseName ?? 'koshi-auth';
 
   const open = (): Promise<IDBDatabase> =>
     new Promise((resolve, reject) => {
@@ -139,7 +139,7 @@ export class DpopSigner {
       await this.store.save(generated);
       return generated;
     };
-    const pair = this.locks ? await this.locks.request('acme-auth:dpop-key', create) : await create();
+    const pair = this.locks ? await this.locks.request('koshi-auth:dpop-key', create) : await create();
     return this.describe(pair);
   }
 

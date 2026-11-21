@@ -1,4 +1,4 @@
-import type { Rbac } from '@acme/auth-core';
+import type { Rbac } from '@koshi-repo/auth-core';
 import type { AuthState } from './types.js';
 
 /** What a route or a piece of interface needs. Every field given must hold. */

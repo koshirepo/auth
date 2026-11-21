@@ -1,4 +1,4 @@
-import type { MfaMethod } from '@acme/auth-core';
+import type { MfaMethod } from '@koshi-repo/auth-core';
 import { memoryAdapter, type MemoryAdapter } from '../src/adapters/memory.js';
 import { memorySink } from '../src/audit/sinks.js';
 import { createAuth, type Auth } from '../src/auth.js';

@@ -15,7 +15,7 @@ import {
   type RecoveryCodesResponse,
   type SessionListResponse,
   type SessionResponse,
-} from '@acme/auth-core';
+} from '@koshi-repo/auth-core';
 import type { AuthenticationResponseJSON, RegistrationResponseJSON } from '@simplewebauthn/server';
 import type { Auth, ReauthFactor } from '../auth.js';
 import type { RequestContext } from '../context.js';
@@ -256,7 +256,7 @@ function grantBody(grant: AccessGrant): AccessGrantResponse {
  * Creates the HTTP handler for every auth endpoint plus the JWKS document.
  *
  * The handler takes a Fetch `Request` and returns a `Response`, so it mounts directly in any
- * runtime or framework built on those types. For Express, use `@acme/auth-server/express`.
+ * runtime or framework built on those types. For Express, use `@koshi-repo/auth-server/express`.
  */
 export function createAuthHandler(auth: Auth, handlerOptions: AuthHandlerOptions): AuthHandler {
   const options = resolveOptions(handlerOptions);

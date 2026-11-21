@@ -1,4 +1,4 @@
-import { AccountError, AuthenticationError, RequestError, isAuthError, type JsonObject } from '@acme/auth-core';
+import { AccountError, AuthenticationError, RequestError, isAuthError, type JsonObject } from '@koshi-repo/auth-core';
 import type { AuthAdapter, User } from '../adapters/types.js';
 import type { AuditEmitter } from '../audit/emitter.js';
 import type { ResolvedConfig } from '../config.js';

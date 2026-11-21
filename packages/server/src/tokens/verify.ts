@@ -1,4 +1,4 @@
-import { InternalError, TokenError, isAuthError, type AccessTokenClaims } from '@acme/auth-core';
+import { InternalError, TokenError, isAuthError, type AccessTokenClaims } from '@koshi-repo/auth-core';
 import { decodeProtectedHeader, errors, jwtVerify, type JWTPayload, type JWTVerifyGetKey } from 'jose';
 
 export const ACCESS_TOKEN_TYPE = 'at+jwt';

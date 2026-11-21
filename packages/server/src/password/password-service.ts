@@ -1,4 +1,4 @@
-import { AccountError } from '@acme/auth-core';
+import { AccountError } from '@koshi-repo/auth-core';
 import type { CredentialStore } from '../adapters/types.js';
 import type { ResolvedConfig } from '../config.js';
 import type { Clock } from '../util/clock.js';

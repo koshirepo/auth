@@ -1,4 +1,4 @@
-import type { AuditEvent } from '@acme/auth-core';
+import type { AuditEvent } from '@koshi-repo/auth-core';
 import type { AuditStore } from '../adapters/types.js';
 
 /** Receives finished audit events. Events never contain secrets or tokens. */

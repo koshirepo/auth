@@ -4,7 +4,7 @@
  * Works with Express 5, and with Express 4 as long as rejected promises from your own async
  * handlers are forwarded to `next`.
  */
-import { RequestError, TokenError, isAuthError } from '@acme/auth-core';
+import { RequestError, TokenError, isAuthError } from '@koshi-repo/auth-core';
 import type { ErrorRequestHandler, Request as ExpressRequest, RequestHandler, Response as ExpressResponse } from 'express';
 import type { Auth } from '../auth.js';
 import {

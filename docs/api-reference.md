@@ -4,14 +4,14 @@ The public API of the three packages, by import path. Options and defaults are i
 
 | Import path | Section |
 |---|---|
-| `@acme/auth-core` | [1](#1-acmeauth-core) |
-| `@acme/auth-server` | [2](#2-acmeauth-server) |
-| `@acme/auth-server/verifier` | [3](#3-acmeauth-serververifier) |
-| `@acme/auth-server/http` | [4](#4-acmeauth-serverhttp) |
-| `@acme/auth-server/express`, `@acme/auth-server/hono` | [5](#5-framework-adapters) |
-| `@acme/auth-server/adapters/*`, `/password/argon2`, `/testing` | [6](#6-adapters-hasher-and-testing) |
-| `@acme/auth-client` | [7](#7-acmeauth-client) |
-| `@acme/auth-client/react` | [8](#8-acmeauth-clientreact) |
+| `@koshi-repo/auth-core` | [1](#1-koshi-repoauth-core) |
+| `@koshi-repo/auth-server` | [2](#2-koshi-repoauth-server) |
+| `@koshi-repo/auth-server/verifier` | [3](#3-koshi-repoauth-serververifier) |
+| `@koshi-repo/auth-server/http` | [4](#4-koshi-repoauth-serverhttp) |
+| `@koshi-repo/auth-server/express`, `@koshi-repo/auth-server/hono` | [5](#5-framework-adapters) |
+| `@koshi-repo/auth-server/adapters/*`, `/password/argon2`, `/testing` | [6](#6-adapters-hasher-and-testing) |
+| `@koshi-repo/auth-client` | [7](#7-koshi-repoauth-client) |
+| `@koshi-repo/auth-client/react` | [8](#8-koshi-repoauth-clientreact) |
 
 Conventions used throughout:
 
@@ -19,7 +19,7 @@ Conventions used throughout:
 - Times in tokens, HTTP bodies and client state are epoch seconds. Times in adapter records are `Date` objects.
 - Every server method that serves a request takes an optional `RequestContext` as its last argument.
 
-## 1. `@acme/auth-core`
+## 1. `@koshi-repo/auth-core`
 
 No dependencies. Runs on the server, in the browser and on edge runtimes.
 
@@ -190,7 +190,7 @@ Every event has `id`, `type`, `at` (ISO 8601), `outcome` (`success` or `failure`
 
 Request and response bodies of the HTTP endpoints, shared by the server handler and the browser client: `ErrorResponse`, `LoginResponse`, `AccessGrantResponse`, `MfaRequiredResponse`, `PasswordLoginRequest`, `MfaVerifyRequest`, `ReauthenticateRequest`, `PasskeyOptionsResponse`, `PasskeyLoginRequest`, `PasskeyRegisterRequest`, `SessionResponse`, `SessionListResponse`, `PasskeyListResponse`, `TotpEnrollmentResponse`, `TotpConfirmRequest`, `RecoveryCodesResponse`, `PasswordChangeRequest`. Section 4.2 shows which endpoint uses which.
 
-## 2. `@acme/auth-server`
+## 2. `@koshi-repo/auth-server`
 
 ### 2.1 `createAuth(config): Auth`
 
@@ -356,7 +356,7 @@ interface RiskInput {
 
 ### 2.12 Adapter interfaces
 
-`AuthAdapter` has seven stores: `users`, `credentials`, `sessions`, `audit`, `keys`, `devices` and `ephemeral`. The interfaces are exported from `@acme/auth-server` and documented in `packages/server/src/adapters/types.ts`. The methods that carry security guarantees are these, and each must be atomic:
+`AuthAdapter` has seven stores: `users`, `credentials`, `sessions`, `audit`, `keys`, `devices` and `ephemeral`. The interfaces are exported from `@koshi-repo/auth-server` and documented in `packages/server/src/adapters/types.ts`. The methods that carry security guarantees are these, and each must be atomic:
 
 | Method | Guarantee |
 |---|---|
@@ -373,12 +373,12 @@ interface RiskInput {
 
 To write an adapter, implement the interfaces and run `runAdapterContractTests` (section 6.4) against it.
 
-## 3. `@acme/auth-server/verifier`
+## 3. `@koshi-repo/auth-server/verifier`
 
 For services that only need to check access tokens. No database, no auth configuration, WebCrypto and `fetch` only.
 
 ```ts
-import { createAccessTokenVerifier } from '@acme/auth-server/verifier';
+import { createAccessTokenVerifier } from '@koshi-repo/auth-server/verifier';
 
 const verify = createAccessTokenVerifier({
   issuer: 'https://api.example.com',
@@ -391,7 +391,7 @@ const { subject, context, claims } = await verify(token, { method, url, dpopProo
 
 `verify(token, { method?, url?, dpopProof? }?)` applies the same checks as `auth.tokens.verify` and throws the same errors. `url` is the URL the browser used. `memoryReplayStore()` is the default replay store.
 
-## 4. `@acme/auth-server/http`
+## 4. `@koshi-repo/auth-server/http`
 
 ### 4.1 Functions
 
@@ -471,7 +471,7 @@ Anything that is not an `AuthError`, and any internal or configuration error, be
 
 Both adapters are thin wrappers over section 4 and take the same options, except that `clientIp` and `onError` receive the framework's own request object.
 
-### 5.1 `@acme/auth-server/express`
+### 5.1 `@koshi-repo/auth-server/express`
 
 ```ts
 const { router, requireAuth, requirePermission, errorHandler } = expressAuth(auth, options);
@@ -488,7 +488,7 @@ The module also exports `getAuth(req)`, which returns the verified token of a re
 
 `clientIp` receives the Express request and defaults to `req.ip`.
 
-### 5.2 `@acme/auth-server/hono`
+### 5.2 `@koshi-repo/auth-server/hono`
 
 ```ts
 const { routes, requireAuth, requirePermission, onError } = honoAuth(auth, options);
@@ -509,11 +509,11 @@ The module also exports `getAuth(c)`, which throws `TOKEN_MISSING` if `requireAu
 
 ## 6. Adapters, hasher and testing
 
-### 6.1 `@acme/auth-server/adapters/memory`
+### 6.1 `@koshi-repo/auth-server/adapters/memory`
 
 `memoryAdapter({ clock? }?)` returns an `AuthAdapter` with an extra `reset()`.
 
-### 6.2 `@acme/auth-server/adapters/postgres`
+### 6.2 `@koshi-repo/auth-server/adapters/postgres`
 
 | Export | Purpose |
 |---|---|
@@ -524,7 +524,7 @@ The module also exports `getAuth(c)`, which throws `TOKEN_MISSING` if `requireAu
 
 Tables: `users`, `password_credentials`, `totp_credentials`, `recovery_codes`, `passkeys`, `sessions`, `refresh_tokens`, `devices`, `signing_keys`, `audit_events`, `ephemeral`, `schema_migrations`.
 
-### 6.3 `@acme/auth-server/password/argon2`
+### 6.3 `@koshi-repo/auth-server/password/argon2`
 
 `argon2id(options?)` returns a `PasswordHasher`:
 
@@ -538,7 +538,7 @@ interface PasswordHasher {
 
 Implement the interface yourself to use another library or runtime.
 
-### 6.4 `@acme/auth-server/testing`
+### 6.4 `@koshi-repo/auth-server/testing`
 
 Requires Vitest.
 
@@ -547,7 +547,7 @@ Requires Vitest.
 | `createFakeClock(startMs?)` | A clock that moves only through `.advance(ms)`, `.advanceSec(s)` and `.set(ms)`. Pass it as `clock` to `createAuth` and to the adapter. |
 | `runAdapterContractTests(name, create)` | Runs the adapter contract, including the concurrent cases, against the adapter that `create()` returns before each test. |
 
-## 7. `@acme/auth-client`
+## 7. `@koshi-repo/auth-client`
 
 ### 7.1 `createAuthClient(options): AuthClient`
 
@@ -636,7 +636,7 @@ Guards decide what to show and perform no navigation. The server decides what is
 | `defaultLocks()`, `inPageLocks` | The lock used to serialise refreshes. |
 | `broadcastChannel(name)` | The channel used between tabs. |
 
-## 8. `@acme/auth-client/react`
+## 8. `@koshi-repo/auth-client/react`
 
 There is no markup, class name or style in this entry point.
 

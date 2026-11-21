@@ -1,6 +1,6 @@
 /**
  * Hashes and verifies passwords. The library ships an Argon2id implementation in
- * `@acme/auth-server/password/argon2`. Supply your own to use a different library or runtime.
+ * `@koshi-repo/auth-server/password/argon2`. Supply your own to use a different library or runtime.
  */
 export interface PasswordHasher {
   /** Returns a self-describing hash string (PHC format) that records the parameters used. */

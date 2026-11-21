@@ -1,4 +1,4 @@
-import { ConfigurationError, InternalError } from '@acme/auth-core';
+import { ConfigurationError, InternalError } from '@koshi-repo/auth-core';
 import { CompactEncrypt, compactDecrypt } from 'jose';
 import { hkdfSha256, hmac } from './crypto.js';
 import { fromBase64Url, toBase64Url, utf8Decode, utf8Encode } from './encoding.js';
@@ -80,7 +80,7 @@ export class DataProtector {
   async keyedHash(purpose: string, value: string): Promise<string> {
     let key = this.derived.get(purpose);
     if (!key) {
-      key = hkdfSha256(this.current, `acme-auth:${purpose}`);
+      key = hkdfSha256(this.current, `koshi-auth:${purpose}`);
       this.derived.set(purpose, key);
     }
     return toBase64Url(await hmac('SHA-256', await key, value));

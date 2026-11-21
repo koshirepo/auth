@@ -1,4 +1,4 @@
-import { ConfigurationError } from '@acme/auth-core';
+import { ConfigurationError } from '@koshi-repo/auth-core';
 
 /** The one method the Postgres adapter needs from a driver. A `pg` Pool or Client fits as is. */
 export interface SqlExecutor {

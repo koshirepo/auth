@@ -1,4 +1,4 @@
-import { isAuthError, type AuthError, type ErrorCode } from '@acme/auth-core';
+import { isAuthError, type AuthError, type ErrorCode } from '@koshi-repo/auth-core';
 import { SignJWT, calculateJwkThumbprint, exportJWK, generateKeyPair, type CryptoKey, type JWK } from 'jose';
 import { expect } from 'vitest';
 import { memoryAdapter } from '../src/adapters/memory.js';

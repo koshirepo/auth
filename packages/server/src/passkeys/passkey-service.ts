@@ -1,4 +1,4 @@
-import { AccountError, PasskeyError, RequestError, type PasskeyInfo } from '@acme/auth-core';
+import { AccountError, PasskeyError, RequestError, type PasskeyInfo } from '@koshi-repo/auth-core';
 import {
   generateAuthenticationOptions,
   generateRegistrationOptions,

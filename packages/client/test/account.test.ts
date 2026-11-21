@@ -1,4 +1,4 @@
-import { isAuthError, type AuthError } from '@acme/auth-core';
+import { isAuthError, type AuthError } from '@koshi-repo/auth-core';
 import { afterEach, describe, expect, it } from 'vitest';
 import { SoftwareAuthenticator } from '../../server/test/authenticator.js';
 import type { AuthClient, WebAuthnBrowser } from '../src/index.js';

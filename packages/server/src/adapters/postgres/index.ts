@@ -1,4 +1,4 @@
-import type { AuditEvent, JsonValue } from '@acme/auth-core';
+import type { AuditEvent, JsonValue } from '@koshi-repo/auth-core';
 import type {
   AuthAdapter,
   DeviceRecord,

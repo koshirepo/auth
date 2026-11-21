@@ -1,4 +1,4 @@
-import { InternalError, type AuditEvent, type AuditEventData, type AuditEventType } from '@acme/auth-core';
+import { InternalError, type AuditEvent, type AuditEventData, type AuditEventType } from '@koshi-repo/auth-core';
 import type { RequestContext } from '../context.js';
 import type { Clock } from '../util/clock.js';
 import { randomId } from '../util/crypto.js';

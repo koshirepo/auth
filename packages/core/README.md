@@ -1,4 +1,4 @@
-# @acme/auth-core
+# @koshi-repo/auth-core
 
 Shared building blocks of the auth library. No dependencies, and no Node or DOM globals, so it runs on the server, in the browser and on edge runtimes.
 
@@ -8,7 +8,7 @@ Shared building blocks of the auth library. No dependencies, and no Node or DOM 
 - Audit event types, identity types and the HTTP wire types shared by server and client.
 
 ```ts
-import { createAuthorizer, defineRbac, definePolicy, deny } from '@acme/auth-core';
+import { createAuthorizer, defineRbac, definePolicy, deny } from '@koshi-repo/auth-core';
 
 const rbac = defineRbac({
   permissions: ['invoice:read', 'invoice:write'],
@@ -19,4 +19,4 @@ const authorizer = createAuthorizer({ rbac });
 authorizer.can({ id: 'u1', roles: ['viewer'] }, 'invoice:write');   // false
 ```
 
-See the [API reference](../../docs/api-reference.md#1-acmeauth-core).
+See the [API reference](../../docs/api-reference.md#1-koshi-repoauth-core).

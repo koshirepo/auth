@@ -23,14 +23,14 @@ importers:
 
   packages/client:
     dependencies:
-      '@acme/auth-core':
+      '@koshi-repo/auth-core':
         specifier: workspace:*
         version: link:../core
       jose:
         specifier: ^6.2.18
         version: 6.2.18
     devDependencies:
-      '@acme/auth-server':
+      '@koshi-repo/auth-server':
         specifier: workspace:*
         version: link:../server
       '@simplewebauthn/browser':
@@ -65,7 +65,7 @@ importers:
 
   packages/server:
     dependencies:
-      '@acme/auth-core':
+      '@koshi-repo/auth-core':
         specifier: workspace:*
         version: link:../core
       '@simplewebauthn/server':

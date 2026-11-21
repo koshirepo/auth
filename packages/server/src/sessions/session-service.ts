@@ -6,7 +6,7 @@ import {
   type PublicUser,
   type RevokeReason,
   type SessionInfo,
-} from '@acme/auth-core';
+} from '@koshi-repo/auth-core';
 import type { AuthAdapter, RefreshTokenRecord, Session, User } from '../adapters/types.js';
 import type { AuditEmitter } from '../audit/emitter.js';
 import type { ResolvedConfig } from '../config.js';

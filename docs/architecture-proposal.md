@@ -19,7 +19,7 @@ Library versions were checked against the npm registry on 2026-11-21: `jose` 6.2
 | 7 | Persistence | **Postgres with plain SQL** | Refresh rotation, TOTP replay protection and recovery-code use each depend on an atomic compare-and-set, which is simplest to write and review as a single SQL statement. The library stays independent of your Prisma version and schema. | A Prisma adapter can implement the same interfaces later. |
 | 8 | Integration guide | **Express**, with a short Next.js section | A single-page app calling an API matches the token model directly. The handlers take a `Request` and return a `Response`, so they mount in Next.js route handlers in a few lines, but server-rendered pages cannot hold an in-memory access token or sign DPoP proofs, which needs separate guidance. | Swap which framework gets the full guide. |
 
-I also need two values from you: the npm scope (written as `@acme` below) and the registry URL.
+I also need two values from you: the npm scope (written as `@koshi-repo` below) and the registry URL.
 
 ## 2. Decisions the spec did not cover
 
@@ -39,9 +39,9 @@ I also need two values from you: the npm scope (written as `@acme` below) and th
 
 ```text
 packages/
-  core/     @acme/auth-core     types, errors, RBAC and ABAC, audit event types, HTTP wire types
-  server/   @acme/auth-server   keys, tokens, sessions, login, MFA, passkeys, DPoP, risk, audit, adapters, HTTP
-  client/   @acme/auth-client   session state, automatic refresh, DPoP signing, MFA and passkey flows, guards
+  core/     @koshi-repo/auth-core     types, errors, RBAC and ABAC, audit event types, HTTP wire types
+  server/   @koshi-repo/auth-server   keys, tokens, sessions, login, MFA, passkeys, DPoP, risk, audit, adapters, HTTP
+  client/   @koshi-repo/auth-client   session state, automatic refresh, DPoP signing, MFA and passkey flows, guards
 docs/       threat model, API reference, configuration reference, integration guide
 ```
 
@@ -57,17 +57,17 @@ docs/       threat model, API reference, configuration reference, integration gu
 
 | Import path | Contents |
 |---|---|
-| `@acme/auth-core` | Everything in section 4 |
-| `@acme/auth-server` | `createAuth`, config and service types, adapter interfaces, audit sinks, risk signals |
-| `@acme/auth-server/verifier` | `createAccessTokenVerifier`: stateless verification for resource servers, needing only a JWKS URL |
-| `@acme/auth-server/http` | `createAuthHandler`: a `(Request) => Promise<Response>` function |
-| `@acme/auth-server/express` | `expressAuth`: router and middleware |
-| `@acme/auth-server/adapters/memory` | `memoryAdapter()` |
-| `@acme/auth-server/adapters/postgres` | `postgresAdapter()` and SQL migrations |
-| `@acme/auth-server/password/argon2` | `argon2id()` hasher |
-| `@acme/auth-server/testing` | Adapter contract test suite and fake clock, for anyone writing an adapter |
-| `@acme/auth-client` | `createAuthClient`, state and guard types |
-| `@acme/auth-client/react` | `AuthProvider`, hooks, `AuthGuard` |
+| `@koshi-repo/auth-core` | Everything in section 4 |
+| `@koshi-repo/auth-server` | `createAuth`, config and service types, adapter interfaces, audit sinks, risk signals |
+| `@koshi-repo/auth-server/verifier` | `createAccessTokenVerifier`: stateless verification for resource servers, needing only a JWKS URL |
+| `@koshi-repo/auth-server/http` | `createAuthHandler`: a `(Request) => Promise<Response>` function |
+| `@koshi-repo/auth-server/express` | `expressAuth`: router and middleware |
+| `@koshi-repo/auth-server/adapters/memory` | `memoryAdapter()` |
+| `@koshi-repo/auth-server/adapters/postgres` | `postgresAdapter()` and SQL migrations |
+| `@koshi-repo/auth-server/password/argon2` | `argon2id()` hasher |
+| `@koshi-repo/auth-server/testing` | Adapter contract test suite and fake clock, for anyone writing an adapter |
+| `@koshi-repo/auth-client` | `createAuthClient`, state and guard types |
+| `@koshi-repo/auth-client/react` | `AuthProvider`, hooks, `AuthGuard` |
 
 Tooling: pnpm workspaces, TypeScript 7 in strict mode, Vitest 5, Changesets for versioning. Output is ESM only, with type declarations. Node 22.12 and later can `require()` ESM, so CommonJS consumers still work, and a single module format avoids loading two copies of the error classes.
 
@@ -273,9 +273,9 @@ Request and response types for every HTTP endpoint live in `core`, so the server
 ### 5.1 Configuration
 
 ```ts
-import { createAuth } from '@acme/auth-server';
-import { postgresAdapter } from '@acme/auth-server/adapters/postgres';
-import { argon2id } from '@acme/auth-server/password/argon2';
+import { createAuth } from '@koshi-repo/auth-server';
+import { postgresAdapter } from '@koshi-repo/auth-server/adapters/postgres';
+import { argon2id } from '@koshi-repo/auth-server/password/argon2';
 
 export const auth = createAuth({
   issuer: 'https://api.example.com',
@@ -414,7 +414,7 @@ The HTTP layer moves `refreshToken` into the cookie. It never appears in a respo
 **Resource servers.** A service that only needs to check tokens imports the verifier, which has no database dependency:
 
 ```ts
-import { createAccessTokenVerifier } from '@acme/auth-server/verifier';
+import { createAccessTokenVerifier } from '@koshi-repo/auth-server/verifier';
 
 const verify = createAccessTokenVerifier({
   issuer: 'https://api.example.com',
@@ -612,7 +612,7 @@ postgresAdapter({
 All paths except the last sit under `basePath`. Request bodies are checked by small hand-written validators, so there is no schema-library dependency.
 
 ```ts
-import { createAuthHandler } from '@acme/auth-server/http';
+import { createAuthHandler } from '@koshi-repo/auth-server/http';
 
 export const handler = createAuthHandler(auth, {
   basePath: '/auth',
@@ -625,7 +625,7 @@ export const handler = createAuthHandler(auth, {
 Express:
 
 ```ts
-import { expressAuth } from '@acme/auth-server/express';
+import { expressAuth } from '@koshi-repo/auth-server/express';
 
 const { router, requireAuth, requirePermission } = expressAuth(auth, {
   basePath: '/auth',
@@ -663,7 +663,7 @@ export { handler as GET };
 ## 6. `client`
 
 ```ts
-import { createAuthClient } from '@acme/auth-client';
+import { createAuthClient } from '@koshi-repo/auth-client';
 
 export const authClient = createAuthClient({
   baseUrl: 'https://api.example.com/auth',
@@ -747,7 +747,7 @@ A guard returns a result and performs no navigation. Your router decides what `a
 **React**
 
 ```tsx
-import { AuthProvider, AuthGuard, useAuth, useLogin, useGuard, useCan } from '@acme/auth-client/react';
+import { AuthProvider, AuthGuard, useAuth, useLogin, useGuard, useCan } from '@koshi-repo/auth-client/react';
 
 <AuthProvider client={authClient}>{children}</AuthProvider>
 

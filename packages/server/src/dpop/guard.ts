@@ -1,4 +1,4 @@
-import { DpopError, isAuthError } from '@acme/auth-core';
+import { DpopError, isAuthError } from '@koshi-repo/auth-core';
 import type { AuditEmitter } from '../audit/emitter.js';
 import type { ResolvedConfig } from '../config.js';
 import type { RequestContext } from '../context.js';

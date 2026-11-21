@@ -18,7 +18,7 @@ import {
   type SessionListResponse,
   type SessionResponse,
   type TotpEnrollmentResponse,
-} from '@acme/auth-core';
+} from '@koshi-repo/auth-core';
 import { broadcastChannel } from './channel.js';
 import { DpopSigner, defaultKeyStore } from './dpop.js';
 import { evaluateGuard, type GuardRequirement, type GuardResult } from './guards.js';
@@ -60,7 +60,7 @@ export function createAuthClient(options: AuthClientOptions): AuthClient {
   const skewMs = (options.refreshSkewSec ?? 30) * 1000;
   const fetchImpl: typeof fetch = options.fetch ?? ((input, init) => globalThis.fetch(input, init));
   const locks = options.locks === null ? null : (options.locks ?? defaultLocks());
-  const channel = options.channel === null ? null : (options.channel ?? broadcastChannel(`acme-auth:${baseUrl}`));
+  const channel = options.channel === null ? null : (options.channel ?? broadcastChannel(`koshi-auth:${baseUrl}`));
   const rbac = options.access?.rbac;
   const authorizer = createAuthorizer({
     ...(rbac ? { rbac } : {}),
@@ -194,7 +194,7 @@ export function createAuthClient(options: AuthClientOptions): AuthClient {
    * server would treat as reuse and answer by revoking the session.
    */
   const refresh = (): Promise<void> => {
-    refreshing ??= (locks ? locks.request(`acme-auth:refresh:${baseUrl}`, doRefresh) : doRefresh()).finally(() => {
+    refreshing ??= (locks ? locks.request(`koshi-auth:refresh:${baseUrl}`, doRefresh) : doRefresh()).finally(() => {
       refreshing = null;
     });
     return refreshing;

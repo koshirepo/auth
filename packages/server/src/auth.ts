@@ -13,7 +13,7 @@ import {
   type PasskeyInfo,
   type RevokeReason,
   type SessionInfo,
-} from '@acme/auth-core';
+} from '@koshi-repo/auth-core';
 import type { AuthenticationResponseJSON, RegistrationResponseJSON } from '@simplewebauthn/server';
 import type { User } from './adapters/types.js';
 import { AuditEmitter } from './audit/emitter.js';

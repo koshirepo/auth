@@ -66,7 +66,7 @@ Present to enable password login.
 
 | Option | Default | Purpose |
 |---|---|---|
-| `hasher` | required | A `PasswordHasher`. Use `argon2id()` from `@acme/auth-server/password/argon2`. |
+| `hasher` | required | A `PasswordHasher`. Use `argon2id()` from `@koshi-repo/auth-server/password/argon2`. |
 | `minLength` | `12` | In characters. Between 8 and 128. |
 | `maxLength` | `256` | Bounds the cost of hashing. Longer passwords are rejected without being hashed. |
 | `check` | none | `(password, { identifier }) => string \| null`. Return a short reason to reject, for example after a breached-password lookup. May be async. |
@@ -117,7 +117,7 @@ Present to enable passkey registration and sign-in.
 | `denyAt` | `90` | Score from which the login is refused with `RISK_DENIED`. Scores are capped at 100. |
 | `whenStepUpUnavailable` | `'allow'` | What to do when step-up is called for and the user has no second factor to step up to. `'allow'` lets the login through. `'deny'` refuses it. See below. |
 
-Built-in signals, all imported from `@acme/auth-server`:
+Built-in signals, all imported from `@koshi-repo/auth-server`:
 
 | Signal | Options and defaults | Fires when |
 |---|---|---|
@@ -222,7 +222,7 @@ Create the tables with `migrate(db, { schema })`, which is safe to call on every
 
 ## `argon2id`
 
-From `@acme/auth-server/password/argon2`. Requires the `argon2` package.
+From `@koshi-repo/auth-server/password/argon2`. Requires the `argon2` package.
 
 | Option | Default | Purpose |
 |---|---|---|

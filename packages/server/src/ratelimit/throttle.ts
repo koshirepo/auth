@@ -1,4 +1,4 @@
-import { RateLimitError } from '@acme/auth-core';
+import { RateLimitError } from '@koshi-repo/auth-core';
 import type { EphemeralStore } from '../adapters/types.js';
 import type { Clock } from '../util/clock.js';
 

@@ -106,7 +106,7 @@ export interface AuthErrorOptions {
   debug?: string;
 }
 
-const BRAND = Symbol.for('@acme/auth-core:AuthError');
+const BRAND = Symbol.for('@koshi-repo/auth-core:AuthError');
 
 const CLASS_NAMES: Record<ErrorKind, string> = {
   authentication: 'AuthenticationError',

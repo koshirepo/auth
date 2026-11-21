@@ -5,7 +5,7 @@ const resolve = (path: string) => fileURLToPath(new URL(path, import.meta.url));
 
 export default defineConfig({
   resolve: {
-    alias: [{ find: /^@acme\/auth-core$/, replacement: resolve('../core/src/index.ts') }],
+    alias: [{ find: /^@koshi-repo\/auth-core$/, replacement: resolve('../core/src/index.ts') }],
   },
   test: {
     name: 'server',

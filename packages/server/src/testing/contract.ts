@@ -1,4 +1,4 @@
-import type { AuditEvent } from '@acme/auth-core';
+import type { AuditEvent } from '@koshi-repo/auth-core';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { AuthAdapter, NewRefreshToken, PasskeyCredential, Session, StoredSigningKey, User } from '../adapters/types.js';
 import type { FakeClock } from './clock.js';

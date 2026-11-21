@@ -1,4 +1,4 @@
-import type { AccountSecurity, MfaMethod, PasskeyInfo, Policy, PublicUser, Rbac, SessionInfo } from '@acme/auth-core';
+import type { AccountSecurity, MfaMethod, PasskeyInfo, Policy, PublicUser, Rbac, SessionInfo } from '@koshi-repo/auth-core';
 import type { ChannelLike } from './channel.js';
 import type { DpopKeyStore } from './dpop.js';
 import type { GuardRequirement, GuardResult } from './guards.js';

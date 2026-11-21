@@ -6,7 +6,7 @@
  *
  * Needs Hono 4.2 or later. Hono 5 calls error handlers differently and is not supported yet.
  */
-import { TokenError, isAuthError } from '@acme/auth-core';
+import { TokenError, isAuthError } from '@koshi-repo/auth-core';
 import type { Context, ErrorHandler, MiddlewareHandler } from 'hono';
 import type { Auth } from '../auth.js';
 import {
